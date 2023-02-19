@@ -18,6 +18,20 @@
 	</properties>
 	<dependencies>
 		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>        
+        
+		<dependency>
+		   <groupId>org.apache.kafka</groupId>
+		   <artifactId>kafka-streams</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -36,6 +50,136 @@
 			<artifactId>spring-kafka-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        
+         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.json/json -->
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20220924</version>
+		</dependency>
+        
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-compiler</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro-maven-plugin</artifactId>
+            <version>1.8.2</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.eclipse.emf/org.eclipse.emf.ecore -->
+		<dependency>
+		    <groupId>org.eclipse.emf</groupId>
+		    <artifactId>org.eclipse.emf.ecore</artifactId>
+		    <version>2.29.0</version>
+		</dependency>
+
+        <dependency>
+            <groupId>org.eclipse.core</groupId>
+            <artifactId>runtime</artifactId>
+            <version>3.10.0-v20140318-2214</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.eclipse.emf</groupId>
+            <artifactId>org.eclipse.emf.common</artifactId>
+            <version>2.27.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.emf.ecore/xmi -->
+		<dependency>
+		    <groupId>org.eclipse.emf.ecore</groupId>
+		    <artifactId>xmi</artifactId>
+		    <version>2.3.0-v200706262000</version>
+		</dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.emf.mapping/ecore2xml -->
+		<dependency>
+		    <groupId>org.eclipse.emf.mapping</groupId>
+		    <artifactId>ecore2xml</artifactId>
+		    <version>2.3.0-v200706262000</version>
+		</dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.eclipse.emf/ecore -->
+		<dependency>
+		    <groupId>org.eclipse.emf</groupId>
+		    <artifactId>ecore</artifactId>
+		    <version>2.3.0-v200706262000</version>
+		</dependency>
+
+        <dependency>
+            <!-- https://mvnrepository.com/artifact/org.eclipse.uml2/common -->
+		    <groupId>org.eclipse.uml2</groupId>
+		    <artifactId>common</artifactId>
+		    <version>2.0.0-v20140602-0749</version>
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.emf</groupId>
+                    <artifactId>ecore</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.eclipse.uml2</groupId>
+            <artifactId>types</artifactId>
+            <version>2.0.0-v20140602-0749</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.emf</groupId>
+                    <artifactId>ecore</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.uml2</groupId>
+            <artifactId>uml</artifactId>
+            <version>5.0.0-v20140602-0749</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.emf</groupId>
+                    <artifactId>ecore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.emf.ecore</groupId>
+                    <artifactId>xmi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.core</groupId>
+                    <artifactId>runtime</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.emf.mapping</groupId>
+                    <artifactId>ecore2xml</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.uml2</groupId>
+                    <artifactId>common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.uml2</groupId>
+                    <artifactId>types</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 	</dependencies>
 
 	<build>
