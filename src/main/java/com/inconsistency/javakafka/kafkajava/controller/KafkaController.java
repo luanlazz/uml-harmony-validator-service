@@ -15,19 +15,19 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping(value = "/kafka")
 public class KafkaController {
-	
+
 	@Autowired
-    private ReceiveModifications receiveModifications;
-    
+	private ReceiveModifications receiveModifications;
+
 	@PostMapping(value = "/send")
-    public int send(@RequestParam String filePath) {
-    	try {
-			receiveModifications.parseUML(filePath);
-	    	return Response.SC_OK;
+	public int send(@RequestParam String filePath, @RequestParam String version) {
+		try {
+			receiveModifications.parseUML(filePath, version);
+			return Response.SC_OK;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	
-    	return Response.SC_NOT_FOUND;
-    }
+
+		return Response.SC_NOT_FOUND;
+	}
 }

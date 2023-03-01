@@ -2,15 +2,17 @@ package com.inconsistency.javakafka.kafkajava.services;
 
 import java.io.IOException;
 
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceDiagram;
+import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
 import com.inconsistency.javakafka.kafkajava.uml.reader.service.ClassDiagramReaderService;
 import com.inconsistency.javakafka.kafkajava.uml.reader.service.SequenceDiagramReaderService;
 import com.inconsistency.javakafka.kafkajava.uml.utils.JSONHelper;
@@ -24,20 +26,20 @@ import lombok.extern.slf4j.Slf4j;
 @Component("receiveModifications")
 public class ReceiveModifications {
 
-    @Value("${topic.name.producer}")
-    private String topicName;
-    
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
-    
-    public ReceiveModifications(KafkaTemplate<String, String> template) {
+	private static final Logger logger = LoggerFactory.getLogger(ReceiveModifications.class);
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final String topicNameBase;
+
+    public ReceiveModifications(
+            final KafkaTemplate<String, Object> template,
+            @Value("${tpd.topic-name}") final String topicName
+    ) {
         this.kafkaTemplate = template;
+        this.topicNameBase = topicName;
     }
 
-    public void parseUML(String filePath) throws Exception{
-    	try {
-//    		log.info("Payload enviado: {}" filePath);  
-    		
+    public void parseUML(String filePath, String version) throws Exception{
+    	try {    		
     		ClassDiagram classDiagram = ClassDiagramReaderService.classDiagramReader(filePath);
     		if (classDiagram == null) {
     			throw new Exception("Diagrama de classes não encontrado.");
@@ -50,15 +52,17 @@ public class ReceiveModifications {
     		
     		String classDiagramJSON = JSONHelper.classDiagramToJSON(classDiagram);
     		String sequenceDiagramJSON = JSONHelper.sequenceDiagramToJSON(sequenceDiagram);
-    				
-    		JSONObject json = new JSONObject();
-    		json.put("class", classDiagramJSON);
-    		json.put("sequence", sequenceDiagramJSON);
     		
-			kafkaTemplate.send(topicName, json.toString());
+    		DiagramProperties diagramProperties = new DiagramProperties(classDiagramJSON, sequenceDiagramJSON);
+    		
+    		for (InconsistencyType inconsistencyType : InconsistencyType.values()) {
+    			String topicName = this.topicNameBase + "." + inconsistencyType.getTag();
+                this.kafkaTemplate.send(topicName, version, diagramProperties);
+    		}
+    		            
+            logger.info("Payload recebido: {}", filePath);  		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}    	
     }
-
 }
