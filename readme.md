@@ -18,7 +18,7 @@ The program analyzes UML diagrams class and sequence to find inconsistencies bas
 
 #### Contribution
 
-UML Parser is based on the [Eclipse modeling models reader](https://github.com/hammadirrshad/emf-uml-model-reader). Selected parsers needed to analyze inconsistencies were used. In addition, some small modifications/adaptations in treatment.
+UML Parser is based on the [Eclipse modeling models reader](https://github.com/hammadirshad/emf-uml-model-reader). Selected parsers needed to analyze inconsistencies were used. In addition, some small modifications/adaptations in treatment.
 
 ## Instructions to run
 
