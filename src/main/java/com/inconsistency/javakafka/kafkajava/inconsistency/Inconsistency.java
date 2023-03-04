@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.Payload;
 
-import com.inconsistency.javakafka.kafkajava.services.ReceiveModifications;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
@@ -16,7 +15,7 @@ import com.inconsistency.javakafka.kafkajava.uml.utils.JSONHelper;
 
 public abstract class Inconsistency implements AnalyseInconsistency {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ReceiveModifications.class);
+	private static final Logger logger = LoggerFactory.getLogger(Inconsistency.class);
 	private ClassDiagram classDiagram;
 	private SequenceDiagram sequenceDiagram;
 	private InconsistencyType inconsistencyType;
@@ -80,19 +79,23 @@ public abstract class Inconsistency implements AnalyseInconsistency {
 		return this.getErrors().size() > 0;
 	}
 	
-	public void listenTopic(ConsumerRecord<String, DiagramProperties> cr,
-            					@Payload DiagramProperties payload) { 
-		synchronized (payload) {
-	        logger.info("Logger strategy: {} | received key {}", this.getInconsistencyType(), cr.key());            	
-	        
-	        ClassDiagram classDiagram = JSONHelper.classDiagramFromJSON(payload.classDiagram());            
-	        SequenceDiagram sequenceDiagram = JSONHelper.sequenceDiagramFromJSON(payload.sequenceDiagram());
-	        
-            this.setClassDiagram(classDiagram);
-            this.setSequenceDiagram(sequenceDiagram);
-                        
-            this.analyse();
-        }
+	public void listenTopic(
+			ConsumerRecord<String, DiagramProperties> cr,
+            @Payload DiagramProperties payload
+	) {
+		try {
+			logger.info("Logger strategy: {} | received key {}", this.getInconsistencyType(), cr.key());            	
+			
+			ClassDiagram classDiagram = JSONHelper.classDiagramFromJSON(payload.classDiagram());            
+			SequenceDiagram sequenceDiagram = JSONHelper.sequenceDiagramFromJSON(payload.sequenceDiagram());
+			
+			this.setClassDiagram(classDiagram);
+			this.setSequenceDiagram(sequenceDiagram);
+			
+			this.analyse();			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}        
 	}
 	
 	@Override

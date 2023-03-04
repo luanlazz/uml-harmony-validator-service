@@ -1,6 +1,5 @@
 package com.inconsistency.javakafka.kafkajava.uml.reader.diagram;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ import com.inconsistency.javakafka.kafkajava.uml.reader.PackageReader;
 public class ClassDiagramReader implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static ClassDiagram getRefModelDetails(Package _package) {
+    public static ClassDiagram getRefModelDetails(Package _package) throws Exception {
 
         ClassDiagram classDiagram = new ClassDiagram();
 
@@ -29,8 +28,7 @@ public class ClassDiagramReader implements Serializable {
             String packageName = _package.getName() != null ? _package.getName() : "";
             packageStructure = PackageReader.readPackage(packageableElements, packageName);
         } else {
-            System.err.println("Package is null");
-            return null;
+            throw new Exception("[ClassDiagram] Package is null");
         }
 
         ArrayList<ClassStructure> classes = classStructures(packageStructure);

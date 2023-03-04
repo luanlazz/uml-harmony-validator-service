@@ -1,7 +1,6 @@
 package com.inconsistency.javakafka.kafkajava.uml.reader.service;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.eclipse.uml2.uml.Package;
 
@@ -11,10 +10,9 @@ import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.ClassDiagramRead
 
 public class ClassDiagramReaderService {
 	
-	public static ClassDiagram classDiagramReader(String filePath) throws IOException {
+	public static ClassDiagram classDiagramReader(String filePath) throws Exception {
 		File model = new File(filePath);
         Package aPackage = new ModelLoader().loadModel(model);
         return ClassDiagramReader.getRefModelDetails(aPackage);    
     }
-	
 }

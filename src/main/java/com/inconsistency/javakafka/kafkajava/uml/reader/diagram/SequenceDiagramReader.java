@@ -1,6 +1,5 @@
 package com.inconsistency.javakafka.kafkajava.uml.reader.diagram;
 
-
 import org.eclipse.emf.common.util.EList;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
 import com.inconsistency.javakafka.kafkajava.uml.models._sequence.*;
@@ -14,19 +13,17 @@ import org.eclipse.uml2.uml.internal.impl.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
 public class SequenceDiagramReader implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    public static SequenceDiagram getRefModelDetails(Package _package) {
+    public static SequenceDiagram getRefModelDetails(Package _package) throws Exception {
 
         EList<PackageableElement> packageableElements;
 
         if (_package != null) {
             packageableElements = _package.getPackagedElements();
         } else {
-            System.err.println("Package is null");
-            return null;
+            throw new Exception("[SequenceDiagram] Package is null");
         }
 
         SequenceDiagram sequenceDiagram = new SequenceDiagram();
