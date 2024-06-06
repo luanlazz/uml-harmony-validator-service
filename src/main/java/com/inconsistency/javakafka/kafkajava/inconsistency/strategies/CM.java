@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
@@ -22,12 +23,11 @@ public class CM extends Inconsistency {
 		super(InconsistencyType.CM, Severity.LOW);
 	}
 	
-	@KafkaListener(topics = ("${tpd.topic-name}" + "." +"CM"), clientIdPrefix = "CM",
-            containerFactory = "kafkaListenerContainerFactory")
-    public void listenTopic(ConsumerRecord<String, DiagramProperties> cr,
-                               @Payload DiagramProperties payload) {
-		super.listenTopic(cr, payload);        	
-    }
+	@Override
+	@KafkaListener(topics = "uml.inconsistency.cm", containerFactory = "UMLAnalyseContainerFactory")
+	public void listenTopic(@Payload DiagramProperties payload, Acknowledgment ack) {
+		super.listenTopic(payload, ack);
+	}
 	
 	@Override
 	public void analyse() {		

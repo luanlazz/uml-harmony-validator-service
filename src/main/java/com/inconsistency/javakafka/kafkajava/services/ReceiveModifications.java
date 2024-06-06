@@ -29,7 +29,7 @@ public class ReceiveModifications {
 	private final String topicNameBase;
 
 	public ReceiveModifications(final KafkaTemplate<String, Object> template,
-			@Value("${tpd.topic-name}") final String topicName) {
+			@Value("${spring.kafka.topic-name}") final String topicName) {
 		this.kafkaTemplate = template;
 		this.topicNameBase = topicName;
 	}
@@ -51,8 +51,8 @@ public class ReceiveModifications {
 		DiagramProperties diagramProperties = new DiagramProperties(classDiagramJSON, sequenceDiagramJSON);
 
 		for (InconsistencyType inconsistencyType : InconsistencyType.values()) {
-			String topicName = this.topicNameBase + "." + inconsistencyType.getTag();
-			this.kafkaTemplate.send(topicName, version, diagramProperties);
+			String topicName = this.topicNameBase + "." + inconsistencyType.name().toLowerCase();
+			this.kafkaTemplate.send(topicName, diagramProperties);
 		}
 
 		logger.info("Payload recebido: {}", filePath);
