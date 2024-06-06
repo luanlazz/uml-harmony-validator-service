@@ -1,0 +1,37 @@
+@startuml
+
+left to right direction
+actor User as g
+
+package IDE {
+  usecase "Load UML models" as UC1
+  usecase "Create UML models" as UC2
+  usecase "Edit UML models" as UC3
+  usecase "Save UML models" as UC4
+  usecase "Check inconsistencies" as UC5
+  usecase "Fix inconsistencies" as UC6
+  usecase "Analyse UML models" as UC7
+}
+
+package ProposedApproach {
+  usecase "Analyse UML file" as UC8
+  usecase "Read UML file" as UC9
+  usecase "Analyse inconsistencies" as UC10
+  usecase "Build notifications" as UC11
+}
+
+g --> UC1
+g --> UC2
+g --> UC3
+g --> UC4
+g --> UC5
+g --> UC6
+g --> UC7
+
+UC4 --> UC8
+UC7 --> UC8
+
+UC8 --> UC9
+UC8 -> UC10
+UC10 ..> UC11
+@enduml
