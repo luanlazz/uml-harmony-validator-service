@@ -1,14 +1,15 @@
-package com.inconsistency.javakafka.kafkajava.inconsistency.strategies;
+package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
@@ -17,16 +18,20 @@ import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeli
 import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
 
 @Component
-public class Om extends Inconsistency {
+public class Om extends AnalyseModel {
 	
-	public Om() {
-		super(InconsistencyType.Om, Severity.LOW);
+	public Om(KafkaTemplate<String, Object> kafkaTemplate) {
+		super(kafkaTemplate, new Inconsistency(InconsistencyType.Om, Severity.LOW));
 	}
 	
 	@Override
-	@KafkaListener(topics = "uml.inconsistency.om", containerFactory = "UMLAnalyseContainerFactory")
+	@KafkaListener(
+			topics = "${spring.kafka.topic.model-analyze}", 
+			groupId = "om", 
+			clientIdPrefix = "om",
+			containerFactory = "UMLAnalyseContainerFactory")
 	public void listenTopic(@Payload DiagramProperties payload, Acknowledgment ack) {
-		super.listenTopic(payload, ack);
+		super.handleEvent(payload, ack);
 	}
 	
 	@Override

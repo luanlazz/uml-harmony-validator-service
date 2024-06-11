@@ -1,17 +1,15 @@
-package com.inconsistency.javakafka.kafkajava.inconsistency.strategies;
+package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 
-import com.inconsistency.javakafka.kafkajava.inconsistency.AnalyseInconsistency;
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
@@ -21,16 +19,20 @@ import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeli
 import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
 
 @Component
-public class CaSD extends Inconsistency implements AnalyseInconsistency {
+public class CaSD extends AnalyseModel {
 
-	public CaSD() {
-		super(InconsistencyType.CaSD, Severity.MEDIUM);
+	public CaSD(KafkaTemplate<String, Object> kafkaTemplate) {
+		super(kafkaTemplate, new Inconsistency(InconsistencyType.CaSD, Severity.MEDIUM));
 	}
-
+	
 	@Override
-	@KafkaListener(topics = "uml.inconsistency.casd", groupId="uml-analyse-inconsistency", containerFactory = "UMLAnalyseContainerFactory")
+	@KafkaListener(
+			topics = "${spring.kafka.topic.model-analyze}",
+			groupId = "casd",
+			clientIdPrefix = "casd",
+			containerFactory = "UMLAnalyseContainerFactory")
 	public void listenTopic(@Payload DiagramProperties payload, Acknowledgment ack) {
-		super.listenTopic(payload, ack);
+		super.handleEvent(payload, ack);
 	}
 
 	@Override

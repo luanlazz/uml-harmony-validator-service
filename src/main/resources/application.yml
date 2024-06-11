@@ -4,4 +4,8 @@ spring:
     consumer:
       group-id: uml-analyse-inconsistency
       auto-offset-reset: earliest
-    topic-name: uml.inconsistency
+    topic:
+      model-analyze: model.analyze
+      inconsistencies-errors: inconsistencies.errors
+      inconsistencies-by-client: inconsistencies.by.client
+    store-inconsistencies: uml.inconsistencies.client.id

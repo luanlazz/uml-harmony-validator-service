@@ -1,14 +1,15 @@
-package com.inconsistency.javakafka.kafkajava.inconsistency.strategies;
+package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
@@ -18,16 +19,20 @@ import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeli
 import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
 
 @Component
-public class CnCD extends Inconsistency {
+public class CnCD extends AnalyseModel {
 	
-	public CnCD() {
-		super(InconsistencyType.CnCD, Severity.HIGH);
+	public CnCD(KafkaTemplate<String, Object> kafkaTemplate) {
+		super(kafkaTemplate, new Inconsistency(InconsistencyType.CnCD, Severity.HIGH));
 	}
 	
 	@Override
-	@KafkaListener(topics = "uml.inconsistency.cncd", containerFactory = "UMLAnalyseContainerFactory")
+	@KafkaListener(
+			topics = "${spring.kafka.topic.model-analyze}", 
+			groupId = "cncd", 
+			clientIdPrefix = "cncd",
+			containerFactory = "UMLAnalyseContainerFactory")
 	public void listenTopic(@Payload DiagramProperties payload, Acknowledgment ack) {
-		super.listenTopic(payload, ack);
+		super.handleEvent(payload, ack);
 	}
 	
 	@Override

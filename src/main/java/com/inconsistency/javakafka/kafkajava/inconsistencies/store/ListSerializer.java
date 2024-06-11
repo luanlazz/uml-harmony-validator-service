@@ -1,0 +1,29 @@
+package com.inconsistency.javakafka.kafkajava.inconsistencies.store;
+
+import java.util.List;
+import java.util.Map;
+
+import org.apache.kafka.common.serialization.Serializer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ListSerializer<T> implements Serializer<List<T>> {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Override
+    public byte[] serialize(String topic, List<T> data) {
+        try {
+            return objectMapper.writeValueAsBytes(data);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void configure(Map<String, ?> configs, boolean isKey) {
+    }
+
+    @Override
+    public void close() {
+    }
+}

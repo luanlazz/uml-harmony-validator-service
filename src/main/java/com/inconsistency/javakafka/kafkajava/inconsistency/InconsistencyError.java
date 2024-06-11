@@ -5,7 +5,7 @@ public class InconsistencyError {
 	private String propertyType;
 	private String propertyName;
 	private String umlPackage;
-	private String message;	
+	private String message;
 	
 	public InconsistencyError(String propertyType, String propertyName, String umlPackage, String message) {
 		super();
