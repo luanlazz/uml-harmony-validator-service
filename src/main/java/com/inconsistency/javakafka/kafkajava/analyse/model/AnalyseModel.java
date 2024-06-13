@@ -39,7 +39,7 @@ public abstract class AnalyseModel implements IAnalyseModel {
 	private Inconsistency inconsistency;
 	private ClassDiagram classDiagram;
 	private SequenceDiagram sequenceDiagram;
-	private int clientId;
+	private String clientId;
 
 	@Autowired
 	public AnalyseModel(KafkaTemplate<String, Object> kafkaTemplate, Inconsistency inconsistency) {
@@ -71,11 +71,11 @@ public abstract class AnalyseModel implements IAnalyseModel {
 		return sequenceDiagram;
 	}
 
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 
-	public void setClientId(int clientId) {
+	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
 

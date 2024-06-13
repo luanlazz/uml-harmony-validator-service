@@ -24,7 +24,7 @@ import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorMod
 @Component
 public class InconsistenciesByClientProcessor {
 
-	private static final Serde<Integer> INTEGER_SERDE = Serdes.Integer();
+	private static final Serde<String> STRING_SERDE = Serdes.String();
 	private static final Serde<InconsistencyErrorModel> INCONSISTENCY_SERDE = new InconsistencyErrorModelSerde();
 
 	@Value("${spring.kafka.store-inconsistencies}")
@@ -33,31 +33,32 @@ public class InconsistenciesByClientProcessor {
 	@Value("${spring.kafka.topic.inconsistencies-errors}")
 	private String topicInconsistencies;
 
-  @Value("${spring.kafka.topic.inconsistencies-by-client}")
-  private String topicInconsistenciesByClient;
+	@Value("${spring.kafka.topic.inconsistencies-by-client}")
+	private String topicInconsistenciesByClient;
 
 	@Autowired
 	public void buildPipeline(StreamsBuilder streamsBuilder) {
 
-		final KStream<Integer, InconsistencyErrorModel> stream = streamsBuilder
-				.stream(this.topicInconsistencies, Consumed.with(INTEGER_SERDE, INCONSISTENCY_SERDE))
-				.peek((key, value) -> System.out.println("Incoming record - key " + key + " value " + value));
+		final KStream<String, InconsistencyErrorModel> stream = streamsBuilder
+				.stream(this.topicInconsistencies, Consumed.with(STRING_SERDE, INCONSISTENCY_SERDE))
+				.peek((key, value) -> System.out.println("[KStream] Incoming record - key " + key + " value " + value));
 
-		KGroupedStream<Integer, InconsistencyErrorModel> groupedStream = stream
-				.groupBy((key, value) -> value.getClientId(), Grouped.with(INTEGER_SERDE, INCONSISTENCY_SERDE));
+		KGroupedStream<String, InconsistencyErrorModel> groupedStream = stream
+				.groupBy((key, value) -> value.getClientId(), Grouped.with(STRING_SERDE, INCONSISTENCY_SERDE));
 
-		KTable<Integer, List<InconsistencyErrorModel>> aggregatedTable = groupedStream.aggregate(ArrayList::new,
+		KTable<String, List<InconsistencyErrorModel>> aggregatedTable = groupedStream.aggregate(ArrayList::new,
 				(key, value, aggregate) -> {
 					aggregate.add(value);
 					return aggregate;
 				},
 				Materialized
-						.<Integer, List<InconsistencyErrorModel>, KeyValueStore<Bytes, byte[]>>as(
+						.<String, List<InconsistencyErrorModel>, KeyValueStore<Bytes, byte[]>>as(
 								this.storeInconsistenciesClientId)
-						.withKeySerde(Serdes.Integer()).withValueSerde(new ListSerde<>(InconsistencyErrorModel.class)));
+						.withKeySerde(STRING_SERDE).withValueSerde(new ListSerde<>(InconsistencyErrorModel.class)));
 
 		aggregatedTable.toStream()
 				.peek((key, value) -> System.out.println("Incoming record - key " + key + " value " + value))
-				.to(this.topicInconsistenciesByClient, Produced.with(INTEGER_SERDE, new ListSerde<>(InconsistencyErrorModel.class)));
+				.to(this.topicInconsistenciesByClient,
+						Produced.with(STRING_SERDE, new ListSerde<>(InconsistencyErrorModel.class)));
 	}
 }

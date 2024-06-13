@@ -6,7 +6,7 @@ public class InconsistencyErrorModel implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	int clientId;
+	String clientId;
 	String inconsistencyType;
 	String severity;
 	String diagram;
@@ -16,11 +16,11 @@ public class InconsistencyErrorModel implements Serializable {
 	String description;
 	String cr;
 
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 
-	public void setClientId(int transactionId) {
+	public void setClientId(String transactionId) {
 		this.clientId = transactionId;
 	}
 

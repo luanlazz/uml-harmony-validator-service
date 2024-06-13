@@ -36,7 +36,7 @@ public class ReceiveModifications {
 		this.topicModelToAnalyze = topicName;
 	}
 
-	public void parseUML(String filePath, int clientId) throws Exception {
+	public void parseUML(String filePath, String clientId) throws Exception {
 		ClassDiagram classDiagram = ClassDiagramReaderService.classDiagramReader(filePath);
 		if (classDiagram == null) {
 			throw new Exception("Diagrama de classes não encontrado.");
