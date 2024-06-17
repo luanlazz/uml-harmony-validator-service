@@ -2,7 +2,7 @@ package com.inconsistency.javakafka.kafkajava.inconsistency;
 
 import java.io.Serializable;
 
-public class InconsistencyErrorModel implements Serializable {
+public class InconsistencyErrorDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

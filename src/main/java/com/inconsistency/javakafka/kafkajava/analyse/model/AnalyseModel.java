@@ -1,24 +1,27 @@
 package com.inconsistency.javakafka.kafkajava.analyse.model;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.EnableKafka;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorModel;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
-import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceDiagram;
-import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
-import com.inconsistency.javakafka.kafkajava.uml.utils.JSONHelper;
+import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,19 +34,19 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AnalyseModel implements IAnalyseModel {
 
 	private static final Logger logger = LoggerFactory.getLogger(Inconsistency.class);
-	private final KafkaTemplate<String, Object> kafkaTemplate;
 
 	@Value("${spring.kafka.topic.inconsistencies-errors}")
 	private String topicInconsistencies;
 
+	@Value("${spring.kafka.bootstrap-servers}")
+	private String bootstrapServers;
+
 	private Inconsistency inconsistency;
-	private ClassDiagram classDiagram;
-	private SequenceDiagram sequenceDiagram;
+	private UMLModelDTO umlModel;
 	private String clientId;
 
 	@Autowired
-	public AnalyseModel(KafkaTemplate<String, Object> kafkaTemplate, Inconsistency inconsistency) {
-		this.kafkaTemplate = kafkaTemplate;
+	public AnalyseModel(Inconsistency inconsistency) {
 		this.inconsistency = inconsistency;
 	}
 
@@ -55,20 +58,12 @@ public abstract class AnalyseModel implements IAnalyseModel {
 		this.inconsistency = inconsistency;
 	}
 
-	public void setClassDiagram(ClassDiagram classDiagram) {
-		this.classDiagram = classDiagram;
+	public void setUMLModel(UMLModelDTO umlModel) {
+		this.umlModel = umlModel;
 	}
 
-	public void setSequenceDiagram(SequenceDiagram sequenceDiagram) {
-		this.sequenceDiagram = sequenceDiagram;
-	}
-
-	public ClassDiagram getClassDiagram() {
-		return classDiagram;
-	}
-
-	public SequenceDiagram getSequenceDiagram() {
-		return sequenceDiagram;
+	public UMLModelDTO getUMLModel() {
+		return umlModel;
 	}
 
 	public String getClientId() {
@@ -83,12 +78,8 @@ public abstract class AnalyseModel implements IAnalyseModel {
 		return topicInconsistencies;
 	}
 
-	public KafkaTemplate<String, Object> getKafkaTemplate() {
-		return kafkaTemplate;
-	}
-
 	public void addError(InconsistencyError error) {
-		InconsistencyErrorModel errorModel = new InconsistencyErrorModel();
+		InconsistencyErrorDTO errorModel = new InconsistencyErrorDTO();
 		errorModel.setClientId(this.getClientId());
 		errorModel.setInconsistencyType(this.getInconsistency().getInconsistencyType().name());
 		errorModel.setSeverity(this.getInconsistency().getSeverity().name());
@@ -99,29 +90,50 @@ public abstract class AnalyseModel implements IAnalyseModel {
 		errorModel.setUmlPackage(error.getUmlPackage());
 		errorModel.setDescription(error.getMessage());
 
-		this.getKafkaTemplate().send(this.getTopicInconsistencies(), errorModel);
+		sendError(errorModel);
+	}
+
+	private void sendError(InconsistencyErrorDTO errorModel) {
+		KafkaProducer<String, InconsistencyErrorDTO> producer = ProducerConfiguration
+				.createKafkaProducerInconsistencyErrorModel(bootstrapServers);
+		ProducerRecord<String, InconsistencyErrorDTO> record = new ProducerRecord<>(topicInconsistencies, clientId,
+				errorModel);
+		Future<RecordMetadata> future = producer.send(record, new Callback() {
+			@Override
+			public void onCompletion(RecordMetadata metadata, Exception exception) {
+				if (exception != null) {
+					logger.warn("[InconsistencyError] Unable to deliver message. {}", exception.getMessage());
+				} else {
+					logger.info("[InconsistencyError] Message delivered with offset {}", metadata.offset());
+				}
+			}
+		});
+
+		try {
+			RecordMetadata metadata = future.get();
+		} catch (InterruptedException | ExecutionException e) {
+			logger.warn("[InconsistencyError] Unable to deliver message. {}", e.getMessage());
+		}
+
+		producer.close();
 	}
 
 	@Override
-	public void listenTopic(@Payload DiagramProperties payload, Acknowledgment ack) {
+	public void listenTopic(ConsumerRecord<String, UMLModelDTO> record) {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	public void handleEvent(@Payload DiagramProperties payload, Acknowledgment ack) {
+	public void handleEvent(ConsumerRecord<String, UMLModelDTO> record) {
 		try {
-			logger.info("Handle Message: strategy {} - Received ack: {}", this.getInconsistency().getInconsistencyType(), ack);
+			logger.info("[{}] Received key: {}", this.getInconsistency().getInconsistencyType().name(), record.key());
 
-			ClassDiagram classDiagram = JSONHelper.classDiagramFromJSON(payload.classDiagram());
-			SequenceDiagram sequenceDiagram = JSONHelper.sequenceDiagramFromJSON(payload.sequenceDiagram());
-
-			this.setClassDiagram(classDiagram);
-			this.setSequenceDiagram(sequenceDiagram);
-			this.setClientId(payload.clientId());
+			this.setClientId(record.key());
+			this.setUMLModel(record.value());
 
 			this.analyse();
 		} catch (Exception e) {
-			logger.error("Logger strategy: {} - Error message: {}", this.getInconsistency().getInconsistencyType(),
+			logger.error("[{}] Error message: {}", this.getInconsistency().getInconsistencyType().name(),
 					e.getMessage());
 		}
 	}

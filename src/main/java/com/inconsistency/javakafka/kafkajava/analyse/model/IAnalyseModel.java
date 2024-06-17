@@ -1,14 +1,13 @@
 package com.inconsistency.javakafka.kafkajava.analyse.model;
 
-import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.messaging.handler.annotation.Payload;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import com.inconsistency.javakafka.kafkajava.uml.reader.diagram.DiagramProperties;
+import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
 
 public interface IAnalyseModel {
-	public void listenTopic(@Payload DiagramProperties payload, Acknowledgment ack);
+	public void listenTopic(ConsumerRecord<String, UMLModelDTO> record);
 
-	public void handleEvent(@Payload DiagramProperties payload, Acknowledgment ack);
+	public void handleEvent(ConsumerRecord<String, UMLModelDTO> record);
 
 	public void analyse();
 }

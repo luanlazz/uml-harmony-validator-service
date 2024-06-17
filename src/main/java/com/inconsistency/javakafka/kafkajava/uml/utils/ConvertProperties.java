@@ -1,11 +1,11 @@
 package com.inconsistency.javakafka.kafkajava.uml.utils;
 
 
-import org.eclipse.uml2.uml.util.UMLUtil;
-import org.eclipse.uml2.uml.util.UMLUtil.UML2EcoreConverter;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.uml2.uml.util.UMLUtil;
+import org.eclipse.uml2.uml.util.UMLUtil.UML2EcoreConverter;
 
 public class ConvertProperties {
     public static Map<String, String> optionsToProcess() {

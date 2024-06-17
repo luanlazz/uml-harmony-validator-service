@@ -1,59 +1,57 @@
 package com.inconsistency.javakafka.kafkajava.uml.models._package;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassInstance;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
 import com.inconsistency.javakafka.kafkajava.uml.models._enum.EnumStructure;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PackageStructure {
 
-    private String name;
-    private List<ClassStructure> classes = new ArrayList<>();
-    private List<ClassInstance> instances = new ArrayList<>();
-    private List<EnumStructure> enums = new ArrayList<>();
-    private List<PackageStructure> packages = new ArrayList<>();
+	private String name;
+	private List<ClassStructure> classes = new ArrayList<>();
+	private List<ClassInstance> instances = new ArrayList<>();
+	private List<EnumStructure> enums = new ArrayList<>();
+	private List<PackageStructure> packages = new ArrayList<>();
 
+	public String getName() {
+		return name;
+	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public List<ClassStructure> getClasses() {
+		return classes;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setClasses(List<ClassStructure> classes) {
+		this.classes = classes;
+	}
 
-    public List<ClassStructure> getClasses() {
-        return classes;
-    }
+	public List<ClassInstance> getInstances() {
+		return instances;
+	}
 
-    public void setClasses(List<ClassStructure> classes) {
-        this.classes = classes;
-    }
+	public void setInstances(List<ClassInstance> instances) {
+		this.instances = instances;
+	}
 
-    public List<ClassInstance> getInstances() {
-        return instances;
-    }
+	public List<EnumStructure> getEnums() {
+		return enums;
+	}
 
-    public void setInstances(List<ClassInstance> instances) {
-        this.instances = instances;
-    }
+	public void setEnums(List<EnumStructure> enums) {
+		this.enums = enums;
+	}
 
-    public List<EnumStructure> getEnums() {
-        return enums;
-    }
+	public List<PackageStructure> getPackages() {
+		return packages;
+	}
 
-    public void setEnums(List<EnumStructure> enums) {
-        this.enums = enums;
-    }
-
-    public List<PackageStructure> getPackages() {
-        return packages;
-    }
-
-    public void setPackages(List<PackageStructure> packages) {
-        this.packages = packages;
-    }
+	public void setPackages(List<PackageStructure> packages) {
+		this.packages = packages;
+	}
 }

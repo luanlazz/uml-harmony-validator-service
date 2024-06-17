@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.uml.reader.diagram;
+package com.inconsistency.javakafka.kafkajava.uml.reader.service;
 
 import org.eclipse.emf.common.util.EList;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;

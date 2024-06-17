@@ -1,68 +1,52 @@
 package com.inconsistency.javakafka.kafkajava.uml.models._class;
 
-public class OperationParameter {
-    private String name;
-    private String type;
-    private String visibility;
-    private String direction;
-    private Object value;
-    private boolean Class;
-    private boolean collection;
+import com.inconsistency.javakafka.kafkajava.uml.UMLElement;
 
+public class OperationParameter extends UMLElement {
 
-    public String getName() {
-        return name;
-    }
+	private String direction;
+	private Object value;
+	private boolean Class;
+	private boolean collection;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getDirection() {
+		return direction;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public Object getValue() {
+		return value;
+	}
 
-    public String getVisibility() {
-        return visibility;
-    }
+	public void setValue(Object value) {
+		this.value = value;
+	}
 
-    public void setVisibility(String visibility) {
-        this.visibility = visibility;
-    }
+	public boolean isClass() {
+		return Class;
+	}
 
-    public String getDirection() {
-        return direction;
-    }
+	public void setClass(boolean aClass) {
+		Class = aClass;
+	}
 
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
+	public boolean isCollection() {
+		return collection;
+	}
 
-    public Object getValue() {
-        return value;
-    }
+	public void setCollection(boolean collection) {
+		this.collection = collection;
+	}
 
-    public void setValue(Object value) {
-        this.value = value;
-    }
+	@Override
+	public String toString() {
+		String output = "\nId: " + this.getId() + "\nname: " + this.getName() + "\ntype: " + this.getType()
+				+ "\nvisibility: " + this.getVisibility() + "\ndirection: " + this.getDirection() + "\nvalue: "
+				+ this.getValue() + "\nClass: " + this.isClass() + "\ncollection: " + this.isCollection();
 
-    public boolean isClass() {
-        return Class;
-    }
-
-    public void setClass(boolean aClass) {
-        Class = aClass;
-    }
-
-    public boolean isCollection() {
-        return collection;
-    }
-
-    public void setCollection(boolean collection) {
-        this.collection = collection;
-    }
+		return output;
+	}
 }

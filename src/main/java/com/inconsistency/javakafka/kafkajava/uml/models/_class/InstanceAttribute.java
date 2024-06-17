@@ -1,84 +1,68 @@
 package com.inconsistency.javakafka.kafkajava.uml.models._class;
 
-public class InstanceAttribute {
-    private String name;
-    private String type;
-    private Object values[];
-    private boolean isClass;
-    private boolean isEnum;
-    private boolean isCollection;
+import com.inconsistency.javakafka.kafkajava.uml.UMLElement;
 
+public class InstanceAttribute extends UMLElement {
 
-    public InstanceAttribute() {
+	private Object values[];
+	private boolean isClass;
+	private boolean isEnum;
+	private boolean isCollection;
 
-    }
+	public InstanceAttribute() {
 
-    public InstanceAttribute(String name, String type, Object values[], boolean isClass, boolean isEnum, boolean isCollection) {
-        this.name = name;
-        this.type = type;
-        this.values = values;
-        this.isClass = isClass;
-        this.isEnum = isEnum;
-        this.isCollection = isCollection;
-    }
+	}
 
-    public boolean getIsClass() {
-        return isClass;
-    }
+	public InstanceAttribute(String name, String type, Object values[], boolean isClass, boolean isEnum,
+			boolean isCollection) {
+		super(name, null, type);
+		this.values = values;
+		this.isClass = isClass;
+		this.isEnum = isEnum;
+		this.isCollection = isCollection;
+	}
 
-    public boolean getIsEnum() {
-        return isEnum;
-    }
+	public boolean getIsClass() {
+		return isClass;
+	}
 
-    public boolean getIsCollection() {
-        return isCollection;
-    }
+	public boolean getIsEnum() {
+		return isEnum;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public boolean getIsCollection() {
+		return isCollection;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Object[] getValues() {
+		return values;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public void setValues(Object values[]) {
+		this.values = values;
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public boolean isClass() {
+		return isClass;
+	}
 
-    public Object[] getValues() {
-        return values;
-    }
+	public void setClass(boolean aClass) {
+		isClass = aClass;
+	}
 
-    public void setValues(Object values[]) {
-        this.values = values;
-    }
+	public boolean isEnum() {
+		return isEnum;
+	}
 
-    public boolean isClass() {
-        return isClass;
-    }
+	public void setEnum(boolean anEnum) {
+		isEnum = anEnum;
+	}
 
-    public void setClass(boolean aClass) {
-        isClass = aClass;
-    }
+	public boolean isCollection() {
+		return isCollection;
+	}
 
-    public boolean isEnum() {
-        return isEnum;
-    }
-
-    public void setEnum(boolean anEnum) {
-        isEnum = anEnum;
-    }
-
-    public boolean isCollection() {
-        return isCollection;
-    }
-
-    public void setCollection(boolean collection) {
-        isCollection = collection;
-    }
+	public void setCollection(boolean collection) {
+		isCollection = collection;
+	}
 }

@@ -1,14 +1,20 @@
 package com.inconsistency.javakafka.kafkajava.inconsistencies.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.inconsistency.javakafka.kafkajava.services.AnalyseUMLModel;
+
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
 public class ListSerde<T> implements Serde<List<T>> {
+	private static final Logger logger = LoggerFactory.getLogger(AnalyseUMLModel.class);
+
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final Class<T> clazz;
 
@@ -24,6 +30,7 @@ public class ListSerde<T> implements Serde<List<T>> {
                 try {
                     return objectMapper.writeValueAsBytes(data);
                 } catch (Exception e) {
+                	logger.error("[List] Error when serializing");
                     throw new RuntimeException(e);
                 }
             }
@@ -46,6 +53,7 @@ public class ListSerde<T> implements Serde<List<T>> {
                 try {
                     return objectMapper.readValue(data, objectMapper.getTypeFactory().constructCollectionType(List.class, clazz));
                 } catch (Exception e) {
+                	logger.error("[List] Error when deserializing");
                     throw new RuntimeException(e);
                 }
             }

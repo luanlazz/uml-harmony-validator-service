@@ -19,13 +19,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorModel;
+import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorModelSerde;
 
 @Component
 public class InconsistenciesByClientProcessor {
 
 	private static final Serde<String> STRING_SERDE = Serdes.String();
-	private static final Serde<InconsistencyErrorModel> INCONSISTENCY_SERDE = new InconsistencyErrorModelSerde();
+	private static final Serde<InconsistencyErrorDTO> INCONSISTENCY_SERDE = new InconsistencyErrorModelSerde();
 
 	@Value("${spring.kafka.store-inconsistencies}")
 	private String storeInconsistenciesClientId;
@@ -39,26 +40,26 @@ public class InconsistenciesByClientProcessor {
 	@Autowired
 	public void buildPipeline(StreamsBuilder streamsBuilder) {
 
-		final KStream<String, InconsistencyErrorModel> stream = streamsBuilder
+		final KStream<String, InconsistencyErrorDTO> stream = streamsBuilder
 				.stream(this.topicInconsistencies, Consumed.with(STRING_SERDE, INCONSISTENCY_SERDE))
 				.peek((key, value) -> System.out.println("[KStream] Incoming record - key " + key + " value " + value));
 
-		KGroupedStream<String, InconsistencyErrorModel> groupedStream = stream
+		KGroupedStream<String, InconsistencyErrorDTO> groupedStream = stream
 				.groupBy((key, value) -> value.getClientId(), Grouped.with(STRING_SERDE, INCONSISTENCY_SERDE));
 
-		KTable<String, List<InconsistencyErrorModel>> aggregatedTable = groupedStream.aggregate(ArrayList::new,
+		KTable<String, List<InconsistencyErrorDTO>> aggregatedTable = groupedStream.aggregate(ArrayList::new,
 				(key, value, aggregate) -> {
 					aggregate.add(value);
 					return aggregate;
 				},
 				Materialized
-						.<String, List<InconsistencyErrorModel>, KeyValueStore<Bytes, byte[]>>as(
+						.<String, List<InconsistencyErrorDTO>, KeyValueStore<Bytes, byte[]>>as(
 								this.storeInconsistenciesClientId)
-						.withKeySerde(STRING_SERDE).withValueSerde(new ListSerde<>(InconsistencyErrorModel.class)));
+						.withKeySerde(STRING_SERDE).withValueSerde(new ListSerde<>(InconsistencyErrorDTO.class)));
 
 		aggregatedTable.toStream()
 				.peek((key, value) -> System.out.println("Incoming record - key " + key + " value " + value))
 				.to(this.topicInconsistenciesByClient,
-						Produced.with(STRING_SERDE, new ListSerde<>(InconsistencyErrorModel.class)));
+						Produced.with(STRING_SERDE, new ListSerde<>(InconsistencyErrorDTO.class)));
 	}
 }

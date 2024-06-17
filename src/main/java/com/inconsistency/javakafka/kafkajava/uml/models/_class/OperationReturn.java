@@ -23,49 +23,64 @@ THE SOFTWARE.*/
 package com.inconsistency.javakafka.kafkajava.uml.models._class;
 
 public class OperationReturn {
-    private String type = "Void";
-    private boolean Class;
-    private boolean collection;
 
+	private String id;
+	private String type = "void";
+	private boolean Class;
+	private boolean collection;
 
-    public OperationReturn() {
+	public OperationReturn() {
 
-    }
+	}
 
-    public OperationReturn(String type) {
-        this.type = type;
-    }
+	public OperationReturn(String type) {
+		this.type = type;
+	}
 
-    public OperationReturn(String type, boolean class1, boolean collection) {
-        super();
-        this.type = type;
-        Class = class1;
-        this.collection = collection;
-    }
+	public OperationReturn(String type, boolean class1, boolean collection) {
+		super();
+		this.type = type;
+		Class = class1;
+		this.collection = collection;
+	}
 
-    public String getType() {
-        return type;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public void setType(String attributeType) {
-        this.type = attributeType;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
-    public boolean isClass() {
-        return Class;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setClass(boolean class1) {
-        Class = class1;
-    }
+	public void setType(String attributeType) {
+		this.type = attributeType;
+	}
 
-    public boolean isCollection() {
-        return collection;
-    }
+	public boolean isClass() {
+		return Class;
+	}
 
-    public void setCollection(boolean collection) {
-        this.collection = collection;
-    }
+	public void setClass(boolean class1) {
+		Class = class1;
+	}
 
+	public boolean isCollection() {
+		return collection;
+	}
 
+	public void setCollection(boolean collection) {
+		this.collection = collection;
+	}
+
+	@Override
+	public String toString() {
+		String output = "\n  id: " + this.getId() + "\n  type: " + this.getType() + "\n  Class: " + this.getClass()
+				+ "\n  collection: " + this.isCollection();
+
+		return output;
+	}
 }

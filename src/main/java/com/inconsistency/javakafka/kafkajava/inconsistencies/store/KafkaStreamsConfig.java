@@ -23,7 +23,7 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorModel;
+import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorDTO;
 
 @EnableKafka
 @EnableKafkaStreams
@@ -70,10 +70,10 @@ public class KafkaStreamsConfig {
 	}
 
 	@Bean
-	public ReadOnlyKeyValueStore<Integer, List<InconsistencyErrorModel>> inconsistenciesByClientStore() {
-		StoreBuilder<KeyValueStore<Integer, List<InconsistencyErrorModel>>> storeBuilder = Stores.keyValueStoreBuilder(
+	public ReadOnlyKeyValueStore<Integer, List<InconsistencyErrorDTO>> inconsistenciesByClientStore() {
+		StoreBuilder<KeyValueStore<Integer, List<InconsistencyErrorDTO>>> storeBuilder = Stores.keyValueStoreBuilder(
 				Stores.persistentKeyValueStore(storeInconsistenciesClientId), Serdes.Integer(),
-				new ListSerde<>(InconsistencyErrorModel.class));
+				new ListSerde<>(InconsistencyErrorDTO.class));
 		return storeBuilder.build();
 	}
 }
