@@ -18,10 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
-import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorDTO;
-import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
+import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
+import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

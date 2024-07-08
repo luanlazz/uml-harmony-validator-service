@@ -26,12 +26,12 @@ import org.eclipse.uml2.uml.internal.impl.InterfaceImpl;
 import org.eclipse.uml2.uml.internal.impl.OpaqueExpressionImpl;
 import org.eclipse.uml2.uml.internal.impl.PrimitiveTypeImpl;
 
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassAttribute;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassOperation;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassRelation;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.OperationParameter;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.OperationReturn;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassAttribute;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassOperation;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassRelation;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.OperationParameter;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.OperationReturn;
 import com.inconsistency.javakafka.kafkajava.uml.utils.Keywords;
 
 public class ClassStructureReader {

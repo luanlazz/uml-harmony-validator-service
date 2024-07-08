@@ -6,8 +6,8 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.resource.UMLResource;
 
-import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.uml.loader.ModelLoader;
+import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
+import com.inconsistency.javakafka.kafkajava.entities.uml.loader.ModelLoader;
 
 public class UMLModelReaderService {
 

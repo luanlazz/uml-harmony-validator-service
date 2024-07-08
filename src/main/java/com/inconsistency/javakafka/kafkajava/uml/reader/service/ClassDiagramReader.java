@@ -8,14 +8,14 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
 
-import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassInstance;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._package.PackageStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassInstance;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._enum.EnumStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.PackageStructure;
 import com.inconsistency.javakafka.kafkajava.uml.reader.PackageReader;
 import com.inconsistency.javakafka.kafkajava.uml.reader.ReaderUtils;
-import com.inconsistency.javakafka.kafkajava.uml.models._enum.EnumStructure;
 
 public class ClassDiagramReader implements Serializable {
 	private static final long serialVersionUID = 1L;

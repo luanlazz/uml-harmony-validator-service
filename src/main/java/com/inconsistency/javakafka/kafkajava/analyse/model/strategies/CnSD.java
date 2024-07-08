@@ -8,15 +8,15 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
-import com.inconsistency.javakafka.kafkajava.inconsistency.Context;
-import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
-import com.inconsistency.javakafka.kafkajava.inconsistency.Severity;
-import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeline;
+import com.inconsistency.javakafka.kafkajava.entities.Context;
+import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
+import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
+import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
+import com.inconsistency.javakafka.kafkajava.entities.Severity;
+import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
 
 @Component
 public class CnSD extends AnalyseModel {

@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyErrorDTO;
-import com.inconsistency.javakafka.kafkajava.services.AnalyseUMLModel;
+import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseUMLModel;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 
 import lombok.RequiredArgsConstructor;
 

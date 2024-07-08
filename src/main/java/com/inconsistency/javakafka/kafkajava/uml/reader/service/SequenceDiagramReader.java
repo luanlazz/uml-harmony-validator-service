@@ -1,9 +1,10 @@
 package com.inconsistency.javakafka.kafkajava.uml.reader.service;
 
 import org.eclipse.emf.common.util.EList;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._package.PackageStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._sequence.*;
+
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.PackageStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.*;
 import com.inconsistency.javakafka.kafkajava.uml.reader.ClassStructureReader;
 import com.inconsistency.javakafka.kafkajava.uml.reader.PackageReader;
 import com.inconsistency.javakafka.kafkajava.uml.utils.Keywords;

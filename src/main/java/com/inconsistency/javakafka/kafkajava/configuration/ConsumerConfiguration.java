@@ -16,8 +16,8 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 
-import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTODeserializer;
+import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
+import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTODeserializer;
 
 @EnableKafka
 @Configuration

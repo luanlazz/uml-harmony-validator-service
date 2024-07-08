@@ -5,10 +5,10 @@ import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
 import org.eclipse.uml2.uml.UMLPackage;
 
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassInstance;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._enum.EnumStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._package.PackageStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassInstance;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._enum.EnumStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.PackageStructure;
 
 public class PackageReader {
 

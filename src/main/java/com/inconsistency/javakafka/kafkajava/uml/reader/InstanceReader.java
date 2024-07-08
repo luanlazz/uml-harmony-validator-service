@@ -17,9 +17,9 @@ import org.eclipse.uml2.uml.Slot;
 import org.eclipse.uml2.uml.StructuralFeature;
 import org.eclipse.uml2.uml.ValueSpecification;
 
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassInstance;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.InstanceAttribute;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassInstance;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.InstanceAttribute;
 
 public class InstanceReader {
 
