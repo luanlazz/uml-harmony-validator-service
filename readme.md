@@ -31,3 +31,7 @@ UML Parser is based on the [Eclipse modeling models reader](https://github.com/h
 ```
 curl --location --request POST 'http://localhost:8080/kafka/send?filePath=%2Fhome%2Fluan%2FDocuments%2Fprojects%2Feclipse-workspace-papyrus%2FPapyrus%2FPapyrus.uml&version=001'
 ```
+
+## License
+
+This repository is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. You may not use the material for commercial purposes. See the [LICENSE](LICENSE) file for more details.
