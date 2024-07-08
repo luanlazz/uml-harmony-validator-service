@@ -80,13 +80,17 @@ public abstract class AnalyseModel implements IAnalyseModel {
 
 	public void addError(InconsistencyError error) {
 		InconsistencyErrorDTO errorModel = new InconsistencyErrorDTO();
+		Inconsistency inconsistency = this.getInconsistency();
+
 		errorModel.setClientId(this.getClientId());
-		errorModel.setInconsistencyType(this.getInconsistency().getInconsistencyType().name());
-		errorModel.setSeverity(this.getInconsistency().getSeverity().name());
-		errorModel.setDiagram(error.getPropertyType());
+		errorModel.setInconsistencyTypeCode(inconsistency.getInconsistencyType().name());
+		errorModel.setInconsistencyTypeDesc(inconsistency.getInconsistencyType().getDescription());
+		errorModel.setSeverity(inconsistency.getSeverity().getValue());
+		errorModel.setSeverityLabel(inconsistency.getSeverity().name());
+		errorModel.setCr(inconsistency.getConsistenciesRules());
+		errorModel.setDiagram(inconsistency.getContext().getValue());
+		errorModel.setPropertyType(inconsistency.getElementType());
 		errorModel.setPropertyName(error.getPropertyName());
-		errorModel.setPropertyType(error.getPropertyType());
-		errorModel.setPropertyType(error.getPropertyType());
 		errorModel.setUmlPackage(error.getUmlPackage());
 		errorModel.setDescription(error.getMessage());
 

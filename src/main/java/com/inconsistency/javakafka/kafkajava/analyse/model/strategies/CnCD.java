@@ -8,12 +8,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.inconsistency.Context;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Severity;
 import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
 import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeline;
@@ -22,7 +22,8 @@ import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeli
 public class CnCD extends AnalyseModel {
 
 	public CnCD() {
-		super(new Inconsistency(InconsistencyType.CnCD, Severity.HIGH));
+		super(new Inconsistency(InconsistencyType.CnCD, Severity.HIGH, Context.CLASS_SEQ_DIAGRAMS, "Objeto",
+				"CR-48 e CR-61"));
 	}
 
 	@Override
@@ -35,9 +36,7 @@ public class CnCD extends AnalyseModel {
 	public void analyse() {
 		Map<String, ClassStructure> classesMessageMap = new HashMap<>();
 
-		ClassDiagram classDiagram = this.getUMLModel().getClassDiagram();
-
-		for (ClassStructure classStructure : classDiagram.getClasses()) {
+		for (ClassStructure classStructure : this.getUMLModel().getClassDiagram().getClasses()) {
 			classesMessageMap.put(classStructure.getName(), classStructure);
 		}
 
@@ -47,8 +46,8 @@ public class CnCD extends AnalyseModel {
 			if (classesMessageMap.get(lifeline.getLifelineName()) == null) {
 				String errorMessage = "O objeto " + lifeline.getLifelineName()
 						+ " não foi definido no diagrama de classes.";
-				InconsistencyError error = new InconsistencyError("object", lifeline.getLifelineName(), null,
-						errorMessage);
+				InconsistencyError error = new InconsistencyError(lifeline.getLifelineName(),
+						this.getUMLModel().getSequenceDiagram().getPackage(), errorMessage);
 				this.addError(error);
 			}
 		}

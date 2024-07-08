@@ -6,6 +6,8 @@ import java.util.List;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
 
 public class SequenceDiagram {
+	
+	private String _package;
 	private List<SequenceLifeline> lifelines = new ArrayList<>();
 	private List<SequenceMessage> messages = new ArrayList<>();
 	private List<ClassStructure> classes = new ArrayList<>();
@@ -13,7 +15,15 @@ public class SequenceDiagram {
 	private List<SequenceGate> gates = new ArrayList<>();
 	private List<SequenceBehavior> behaviors = new ArrayList<>();
 	private List<SequenceCombinedFragment> fragments = new ArrayList<>();
+	
+	public String getPackage() {
+		return _package;
+	}
 
+	public void setPackage(String _package) {
+		this._package = _package;
+	}
+	
 	public List<SequenceLifeline> getLifelines() {
 		return lifelines;
 	}

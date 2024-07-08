@@ -8,6 +8,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.inconsistency.Context;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
@@ -20,7 +21,7 @@ import com.inconsistency.javakafka.kafkajava.uml.models._sequence.SequenceLifeli
 public class Om extends AnalyseModel {
 
 	public Om() {
-		super(new Inconsistency(InconsistencyType.Om, Severity.LOW));
+		super(new Inconsistency(InconsistencyType.Om, Severity.LOW, Context.SEQUENCE_DIAGRAM, "Objeto", ""));
 	}
 
 	@Override
@@ -38,8 +39,7 @@ public class Om extends AnalyseModel {
 		for (SequenceLifeline lifeline : sequenceDiagram.getLifelines()) {
 			if (classesName.add(lifeline.getLifelineName()) == false) {
 				String errorMessage = "O objeto " + lifeline.getLifelineName() + " já foi definido no diagrama.";
-				InconsistencyError error = new InconsistencyError("message", lifeline.getLifelineName(), null,
-						errorMessage);
+				InconsistencyError error = new InconsistencyError(lifeline.getLifelineName(), this.getUMLModel().getSequenceDiagram().getPackage(), errorMessage);
 				this.addError(error);
 			}
 		}

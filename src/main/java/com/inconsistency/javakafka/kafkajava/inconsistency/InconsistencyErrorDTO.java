@@ -7,8 +7,10 @@ public class InconsistencyErrorDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	String clientId;
-	String inconsistencyType;
-	String severity;
+	String inconsistencyTypeCode;
+	String inconsistencyTypeDesc;
+	int severity;
+	String severityLabel;
 	String diagram;
 	String propertyType;
 	String propertyName;
@@ -24,20 +26,36 @@ public class InconsistencyErrorDTO implements Serializable {
 		this.clientId = transactionId;
 	}
 
-	public String getInconsistencyType() {
-		return inconsistencyType;
+	public String getInconsistencyTypeCode() {
+		return inconsistencyTypeCode;
 	}
 
-	public void setInconsistencyType(String inconsistencyType) {
-		this.inconsistencyType = inconsistencyType;
+	public void setInconsistencyTypeCode(String inconsistencyTypeCode) {
+		this.inconsistencyTypeCode = inconsistencyTypeCode;
+	}
+	
+	public String getInconsistencyTypeDesc() {
+		return inconsistencyTypeDesc;
 	}
 
-	public String getSeverity() {
+	public void setInconsistencyTypeDesc(String inconsistencyTypeLabel) {
+		this.inconsistencyTypeDesc = inconsistencyTypeLabel;
+	}
+	
+	public int getSeverity() {
 		return severity;
 	}
 
-	public void setSeverity(String severity) {
+	public void setSeverity(int severity) {
 		this.severity = severity;
+	}
+
+	public String getSeverityLabel() {
+		return severityLabel;
+	}
+
+	public void setSeverityLabel(String severityLabel) {
+		this.severityLabel = severityLabel;
 	}
 
 	public String getDiagram() {

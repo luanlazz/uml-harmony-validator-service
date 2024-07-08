@@ -12,6 +12,7 @@ import com.inconsistency.javakafka.kafkajava.inconsistency.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.inconsistency.InconsistencyType;
 import com.inconsistency.javakafka.kafkajava.inconsistency.Severity;
+import com.inconsistency.javakafka.kafkajava.inconsistency.Context;
 import com.inconsistency.javakafka.kafkajava.uml.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
@@ -20,7 +21,7 @@ import com.inconsistency.javakafka.kafkajava.uml.models._class.ClassStructure;
 public class CM extends AnalyseModel {
 
 	public CM() {
-		super(new Inconsistency(InconsistencyType.CM, Severity.LOW));
+		super(new Inconsistency(InconsistencyType.CM, Severity.LOW, Context.CLASS_DIAGRAM, "Classe", ""));
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class CM extends AnalyseModel {
 		for (ClassStructure cs : classDiagram.getClasses()) {
 			if (classesName.add(cs.getName()) == false) {
 				String errorMessage = "A classe " + cs.getName() + " já foi definida no diagrama";
-				InconsistencyError error = new InconsistencyError("class", cs.getName(), cs.getPackage(), errorMessage);
+				InconsistencyError error = new InconsistencyError(cs.getName(), cs.getPackage(), errorMessage);
 				this.addError(error);
 			}
 		}

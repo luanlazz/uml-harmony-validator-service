@@ -2,16 +2,16 @@ package com.inconsistency.javakafka.kafkajava.uml.models._sequence;
 
 public class SequenceMessage {
 	private String messageType;
-	private String MessageName;
-	private SequenceLifeline Sender;
-	private SequenceLifeline Reciver;
+	private String messageName;
+	private SequenceLifeline sender;
+	private SequenceLifeline receiver;
 
-	public SequenceMessage(String messageType, String messageName, SequenceLifeline sender, SequenceLifeline reciver) {
+	public SequenceMessage(String messageType, String messageName, SequenceLifeline sender, SequenceLifeline receiver) {
 		super();
 		this.messageType = messageType;
-		MessageName = messageName;
-		Sender = sender;
-		Reciver = reciver;
+		this.messageName = messageName;
+		this.sender = sender;
+		this.receiver = receiver;
 	}
 
 	public SequenceMessage() {
@@ -27,32 +27,32 @@ public class SequenceMessage {
 	}
 
 	public String getMessageName() {
-		return MessageName;
+		return messageName;
 	}
 
 	public void setMessageName(String messageName) {
-		MessageName = messageName;
+		this.messageName = messageName;
 	}
 
 	public SequenceLifeline getSender() {
-		return Sender;
+		return sender;
 	}
 
 	public void setSender(SequenceLifeline sender) {
-		Sender = sender;
+		this.sender = sender;
 	}
 
-	public SequenceLifeline getReciver() {
-		return Reciver;
+	public SequenceLifeline getReceiver() {
+		return receiver;
 	}
 
-	public void setReciver(SequenceLifeline reciver) {
-		Reciver = reciver;
+	public void setReceiver(SequenceLifeline receiver) {
+		this.receiver = receiver;
 	}
 
 	@Override
 	public String toString() {
 		return "\nMessage \n name: " + this.getMessageName() + " - type: " + this.getMessageType() + " - reciver: "
-				+ this.getReciver().getLifelineName() + " - sender: " + this.getSender().getLifelineName();
+				+ this.getReceiver().getLifelineName() + " - sender: " + this.getSender().getLifelineName();
 	}
 }
