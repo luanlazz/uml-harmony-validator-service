@@ -87,13 +87,14 @@ public class ModelLoader {
 		return RESOURCE_SET;
 	}
 
-	public Package loadModel(File file) throws IOException {
+	public Package loadModel(File file) throws Exception {
 		if (file.getName().endsWith("uml")) {
 			return loadUMLModel(file);
 		} else if (file.getName().endsWith("ecore")) {
 			return loadEcoreModel(file);
 		}
-		return null;
+		
+		throw new Exception("File invalid!");
 	}
 
 	public Package loadModel(String umlContent) throws IOException {
