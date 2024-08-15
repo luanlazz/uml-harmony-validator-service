@@ -1,8 +1,6 @@
 package com.inconsistency.javakafka.kafkajava.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -21,8 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseUMLModel;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseModel;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,7 +31,7 @@ public class KafkaController {
 	private static final Logger logger = LoggerFactory.getLogger(KafkaController.class);
 
 	@Autowired
-	private AnalyseUMLModel analyseUMLModelService;
+	private AnalyseModel analyseUMLModelService;
 
 	public KafkaController() {
 	}
@@ -78,16 +75,15 @@ public class KafkaController {
 	public @ResponseBody Map<String, Object> getDealerSales(@PathVariable String clientId) {
 		HashMap<String, Object> responseBody = new HashMap<>();
 
-		List<InconsistencyErrorDTO> clientInconsistencies = new ArrayList<>();
-
 		try {
-			clientInconsistencies = this.analyseUMLModelService.getInconsistenciesByClientId(clientId);
+			InconsistenciesResponse response = this.analyseUMLModelService.getInconsistenciesByClientId(clientId);
+
 			responseBody.put("success", "true");
-			responseBody.put("data", clientInconsistencies);
+			responseBody.put("data", response);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			logger.error(ExceptionUtils.getStackTrace(e));
-			responseBody.put("seccess", "false");
+			responseBody.put("success", "false");
 		}
 
 		return responseBody;

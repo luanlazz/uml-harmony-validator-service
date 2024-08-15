@@ -95,11 +95,10 @@ public class ClassOperation extends UMLElement {
 
 	@Override
 	public String toString() {
-		String output = "\nId: " + this.getId() + "\nName: " + this.getName() + "\nreturnType: "
-				+ this.getReturnType().toString() + "\nvisibility: " + this.getVisibility() + "\nbody: "
-				+ this.getBody() + "\n_abstract: " + this.isAbstract() + "\n_final: " + this.isFinal()
-				+ "\noNonConditionBody: " + this.getoNonConditionBody() + "\ncondition: " + this.getCondition()
-				+ "\nconditionTrue_Body: " + this.getConditionTrue_Body() + "\nconditionFalse_Body: "
+		String output = "\n\n+Function" + super.toString() + "\n returnType: " + this.getReturnType().toString()
+				+ "\n body: " + this.getBody() + "\n _abstract: " + this.isAbstract() + "\n _final: " + this.isFinal()
+				+ "\n oNonConditionBody: " + this.getoNonConditionBody() + "\n condition: " + this.getCondition()
+				+ "\n conditionTrue_Body: " + this.getConditionTrue_Body() + "\n conditionFalse_Body: "
 				+ this.getConditionFalse_Body();
 
 		return output;

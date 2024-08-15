@@ -12,6 +12,7 @@ import org.eclipse.uml2.uml.LiteralReal;
 import org.eclipse.uml2.uml.LiteralSpecification;
 import org.eclipse.uml2.uml.LiteralString;
 import org.eclipse.uml2.uml.LiteralUnlimitedNatural;
+import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
 import org.eclipse.uml2.uml.Slot;
 import org.eclipse.uml2.uml.StructuralFeature;
@@ -23,12 +24,11 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.Instance
 
 public class InstanceReader {
 
-	public static ClassInstance readInstance(PackageableElement element, String packageName) {
+	public static ClassInstance readInstance(PackageableElement element, Package _package) {
 		ClassInstance classInstance = new ClassInstance();
 		InstanceSpecification instance = (InstanceSpecification) element;
 		if (instance.getName() != null && !instance.getName().isEmpty()) {
 			classInstance.setName(instance.getName());
-			classInstance.set_package(packageName);
 
 			for (Slot slot : instance.getSlots()) {
 				StructuralFeature feature = slot.getDefiningFeature();
@@ -82,7 +82,8 @@ public class InstanceReader {
 				if (instance.getName() != null && classifier.getName() != null) {
 					ClassStructure classStructure = new ClassStructure();
 					classStructure.setName(classifier.getName());
-					classStructure.setPackage(classifier.getPackage().getName());
+//					classStructure.setPackage(classifier.getPackage().getName());
+					classStructure.setParentId(ReaderUtils.getXMLId(_package));
 					classInstance.getClasses().add(classStructure);
 				}
 			}

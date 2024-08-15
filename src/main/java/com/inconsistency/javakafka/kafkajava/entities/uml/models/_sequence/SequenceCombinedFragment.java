@@ -2,7 +2,10 @@ package com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence;
 
 import java.util.ArrayList;
 
-public class SequenceCombinedFragment {
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
+
+public class SequenceCombinedFragment extends UMLElement {
+
 	private String condition = null;
 	private String operation = null;
 	private ArrayList<SequenceLifeline> sequenceLifelines = new ArrayList<SequenceLifeline>();

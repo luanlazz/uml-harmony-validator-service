@@ -1,12 +1,15 @@
 package com.inconsistency.javakafka.kafkajava.entities.uml.dto;
 
-import org.eclipse.uml2.uml.Package;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassInstance;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._enum.EnumStructure;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceDiagram;
-import com.inconsistency.javakafka.kafkajava.uml.reader.ReaderUtils;
-import com.inconsistency.javakafka.kafkajava.uml.reader.service.ClassDiagramReader;
-import com.inconsistency.javakafka.kafkajava.uml.reader.service.SequenceDiagramReader;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceMessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,19 +24,15 @@ public class UMLModelDTO {
 
 	private String id;
 	private String name;
-	private ClassDiagram classDiagram;
-	private SequenceDiagram sequenceDiagram;
+	private List<ClassDiagram> classDiagrams = new ArrayList<>();
+	private List<SequenceDiagram> sequenceDiagrams = new ArrayList<>();
+	private List<ClassStructure> classes = new ArrayList<>();
+	private List<ClassInstance> instances = new ArrayList<>();
+	private List<EnumStructure> enumerations = new ArrayList<>();
+	private List<SequenceLifeline> lifelines = new ArrayList<>();
+	private List<SequenceMessage> messages = new ArrayList<>();
 
 	public UMLModelDTO() {
-
-	}
-
-	public UMLModelDTO(Package _package) throws Exception {
-		this.setId(ReaderUtils.getXMLId(_package));
-		String packageName = _package.getName() != null ? _package.getName() : "";
-		this.setName(packageName);
-		this.setClassDiagram(ClassDiagramReader.getRefModelDetails(_package));
-		this.setSequenceDiagram(SequenceDiagramReader.getRefModelDetails(_package));
 	}
 
 	public String getId() {
@@ -52,19 +51,59 @@ public class UMLModelDTO {
 		this.name = name;
 	}
 
-	public ClassDiagram getClassDiagram() {
-		return classDiagram;
+	public List<ClassDiagram> getClassDiagram() {
+		return classDiagrams;
 	}
 
-	public void setClassDiagram(ClassDiagram classDiagram) {
-		this.classDiagram = classDiagram;
+	public void setClassDiagram(List<ClassDiagram> classDiagrams) {
+		this.classDiagrams = classDiagrams;
 	}
 
-	public SequenceDiagram getSequenceDiagram() {
-		return sequenceDiagram;
+	public List<SequenceDiagram> getSequenceDiagram() {
+		return sequenceDiagrams;
 	}
 
-	public void setSequenceDiagram(SequenceDiagram sequenceDiagram) {
-		this.sequenceDiagram = sequenceDiagram;
+	public void setSequenceDiagram(List<SequenceDiagram> sequenceDiagrams) {
+		this.sequenceDiagrams = sequenceDiagrams;
+	}
+
+	public List<ClassStructure> getClasses() {
+		return classes;
+	}
+
+	public void setClasses(ArrayList<ClassStructure> classes) {
+		this.classes = classes;
+	}
+
+	public List<ClassInstance> getInstances() {
+		return instances;
+	}
+
+	public void setInstances(ArrayList<ClassInstance> instances) {
+		this.instances = instances;
+	}
+
+	public List<EnumStructure> getEnumerations() {
+		return enumerations;
+	}
+
+	public void setEnumerations(ArrayList<EnumStructure> enumerations) {
+		this.enumerations = enumerations;
+	}
+
+	public List<SequenceLifeline> getLifelines() {
+		return lifelines;
+	}
+
+	public void setLifelines(List<SequenceLifeline> lifelines) {
+		this.lifelines = lifelines;
+	}
+
+	public List<SequenceMessage> getMessages() {
+		return messages;
+	}
+
+	public void setMessages(List<SequenceMessage> messages) {
+		this.messages = messages;
 	}
 }

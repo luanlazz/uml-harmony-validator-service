@@ -1,6 +1,9 @@
 package com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence;
 
-public class SequenceGate {
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
+
+public class SequenceGate extends UMLElement {
+
 	private String gateMessage;
 	private SequenceLifeline gateLifeline;
 
@@ -30,4 +33,8 @@ public class SequenceGate {
 		this.gateLifeline = gateLifeline;
 	}
 
+	@Override
+	public String toString() {
+		return "\n\n+Gate: " + super.toString();
+	}
 }

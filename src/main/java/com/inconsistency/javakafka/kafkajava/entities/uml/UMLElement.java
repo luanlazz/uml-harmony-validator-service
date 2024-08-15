@@ -6,6 +6,9 @@ public class UMLElement {
 	private String name;
 	private String visibility;
 	private String type;
+	private String parentId;
+
+	private int inconsistenciesCount = 0;
 
 	public UMLElement() {
 	}
@@ -46,5 +49,32 @@ public class UMLElement {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(String parent) {
+		this.parentId = parent;
+	}
+
+	public int getInconsistenciesCount() {
+		return inconsistenciesCount;
+	}
+
+	private void setInconsistenciesCount(final int inconsistenciesCount) {
+		this.inconsistenciesCount = inconsistenciesCount;
+	}
+
+	public void addCount() {
+		this.inconsistenciesCount++;
+	}
+
+	@Override
+	public String toString() {
+		return "\n Id: " + this.getId() + "\n Name: " + this.getName() + "\n Type: " + this.getType() + "\n Parent: "
+				+ this.getParentId() + "\n Inconsistencies: " + this.getInconsistenciesCount() + "\n Visibility: "
+				+ this.getVisibility();
 	}
 }

@@ -11,14 +11,11 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.loader.ModelLoader;
 
 public class UMLModelReaderService {
 
-	public static UMLModelDTO diagramReader(String umlContent) throws Exception {
-		Package aPackage = new ModelLoader().loadModel(umlContent);
-		return new UMLModelDTO(aPackage);
-	}
-
 	public static UMLModelDTO diagramReader(File modelFile) throws Exception {
 		Package aPackage = new ModelLoader().loadModel(modelFile);
-		return new UMLModelDTO(aPackage);
+		UMLModelDTO umlModel = PackageReaderService.getRefModelDetails(aPackage);
+
+		return umlModel;
 	}
 
 	public static Package modelReader(String filePath) throws Exception {

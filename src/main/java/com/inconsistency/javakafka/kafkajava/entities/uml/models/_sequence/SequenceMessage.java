@@ -1,6 +1,9 @@
 package com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence;
 
-public class SequenceMessage {
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
+
+public class SequenceMessage extends UMLElement {
+
 	private String messageType;
 	private String messageName;
 	private SequenceLifeline sender;
@@ -52,7 +55,8 @@ public class SequenceMessage {
 
 	@Override
 	public String toString() {
-		return "\nMessage \n name: " + this.getMessageName() + " - type: " + this.getMessageType() + " - reciver: "
-				+ this.getReceiver().getLifelineName() + " - sender: " + this.getSender().getLifelineName();
+		return "\n\n+Message: " + super.toString() + "\n MSG Name: " + this.getMessageName() + " - MSG type: "
+				+ this.getMessageType() + " - reciver: " + this.getReceiver().getLifelineName() + " - sender: "
+				+ this.getSender().getLifelineName();
 	}
 }

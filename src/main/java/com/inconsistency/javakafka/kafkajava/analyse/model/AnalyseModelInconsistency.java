@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @EnableKafka
 @Component("receiveModifications")
-public abstract class AnalyseModel implements IAnalyseModel {
+public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 
 	private static final Logger logger = LoggerFactory.getLogger(Inconsistency.class);
 
@@ -46,7 +46,7 @@ public abstract class AnalyseModel implements IAnalyseModel {
 	private String clientId;
 
 	@Autowired
-	public AnalyseModel(Inconsistency inconsistency) {
+	public AnalyseModelInconsistency(Inconsistency inconsistency) {
 		this.inconsistency = inconsistency;
 	}
 
@@ -83,16 +83,18 @@ public abstract class AnalyseModel implements IAnalyseModel {
 		Inconsistency inconsistency = this.getInconsistency();
 
 		errorModel.setClientId(this.getClientId());
+		errorModel.setDescription(error.getMessage());
+
 		errorModel.setInconsistencyTypeCode(inconsistency.getInconsistencyType().name());
 		errorModel.setInconsistencyTypeDesc(inconsistency.getInconsistencyType().getDescription());
-		errorModel.setSeverity(inconsistency.getSeverity().getValue());
-		errorModel.setSeverityLabel(inconsistency.getSeverity().name());
+
 		errorModel.setCr(inconsistency.getConsistenciesRules());
-		errorModel.setDiagram(inconsistency.getContext().getValue());
-		errorModel.setPropertyType(inconsistency.getElementType());
-		errorModel.setPropertyName(error.getPropertyName());
-		errorModel.setUmlPackage(error.getUmlPackage());
-		errorModel.setDescription(error.getMessage());
+
+		errorModel.setElId(error.getElId());
+
+		errorModel.setParentId(error.getDiagramId());
+
+		errorModel.setModel(this.getUMLModel());
 
 		sendError(errorModel);
 	}

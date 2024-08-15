@@ -3,16 +3,18 @@ package com.inconsistency.javakafka.kafkajava.entities.uml.models._enum;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.uml2.uml.Package;
+
 public class EnumStructure {
-	private String _package;
+	private Package _package;
 	private String name;
 	private List<String> literals = new ArrayList<>();
 
-	public String getPackage() {
+	public Package getPackage() {
 		return _package;
 	}
 
-	public void setPackage(String _package) {
+	public void setPackage(Package _package) {
 		this._package = _package;
 	}
 

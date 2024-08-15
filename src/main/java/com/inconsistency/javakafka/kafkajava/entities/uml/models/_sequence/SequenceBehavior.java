@@ -2,7 +2,10 @@ package com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence;
 
 import java.util.ArrayList;
 
-public class SequenceBehavior {
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
+
+public class SequenceBehavior extends UMLElement {
+
 	private SequenceLifeline lifeline;
 	private SequenceMessage start;
 	private SequenceMessage finish;
@@ -57,4 +60,23 @@ public class SequenceBehavior {
 		this.fragments.add(fragment);
 	}
 
+	@Override
+	public String toString() {
+		String output = "\n\n+Behavior:" + super.toString() + "\n lifeline: " + this.getLifeline().getName()
+				+ "\n start: " + this.getStart().getName() + "\n finish: " + this.getFinish().getName();
+
+		output += "\n+Calls: ";
+
+		for (SequenceMessage seqMsg : this.getCalls()) {
+			output += "\n Message:" + seqMsg.getName();
+		}
+
+		output += "\n+ Fragments: ";
+
+		for (SequenceCombinedFragment combinedFragment : this.getFragments()) {
+			output += "\n Name:" + combinedFragment.getName();
+		}
+
+		return output;
+	}
 }

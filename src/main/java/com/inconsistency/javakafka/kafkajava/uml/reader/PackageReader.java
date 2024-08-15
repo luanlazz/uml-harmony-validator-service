@@ -12,34 +12,31 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.Packag
 
 public class PackageReader {
 
-	public static PackageStructure readPackage(EList<PackageableElement> packageableElements, String packageName,
-			Package _package) {
+	public static PackageStructure readPackage(EList<PackageableElement> packageableElements, Package _package) {
 
 		PackageStructure packageStructure = new PackageStructure();
-		packageStructure.setName(packageName);
+		packageStructure.setId(ReaderUtils.getXMLId(_package));
+		packageStructure.setName(_package.getName());
+		packageStructure.setPackage(_package);
 
 		for (PackageableElement element : packageableElements) {
 			if (element.eClass() == UMLPackage.Literals.CLASS) {
-				ClassStructure classStructure = ClassStructureReader.readClass(element, packageName);
+				ClassStructure classStructure = ClassStructureReader.readClass(element, _package);
 				packageStructure.getClasses().add(classStructure);
 			} else if (element.eClass() == UMLPackage.Literals.ENUMERATION) {
-				EnumStructure enumStructure = EnumerationReader.readEnumeration(element, packageName);
+				EnumStructure enumStructure = EnumerationReader.readEnumeration(element, _package);
 				packageStructure.getEnums().add(enumStructure);
 			} else if (element.eClass() == UMLPackage.eINSTANCE.getInstanceSpecification()) {
-				ClassInstance classInstance = InstanceReader.readInstance(element, packageName);
+				ClassInstance classInstance = InstanceReader.readInstance(element, _package);
 				packageStructure.getInstances().add(classInstance);
 			} else if (element.eClass() == UMLPackage.Literals.PACKAGE) {
 				Package _elPackage = (Package) element;
 				String newPackageName;
 
-				if (packageName.equals("")) {
-					newPackageName = _elPackage.getName() != null ? _elPackage.getName() : packageName;
-				} else {
-					newPackageName = _elPackage.getName() != null ? packageName + "." + _elPackage.getName()
-							: packageName;
-				}
-				PackageStructure nustedPackageStructure = readPackage(_elPackage.getPackagedElements(), newPackageName,
-						_elPackage);
+				newPackageName = _elPackage.getName() != null ? _elPackage.getName() : _package.getName();
+
+				_elPackage.setName(newPackageName);
+				PackageStructure nustedPackageStructure = readPackage(_elPackage.getPackagedElements(), _elPackage);
 				packageStructure.getPackages().add(nustedPackageStructure);
 			}
 		}

@@ -1,36 +1,19 @@
 package com.inconsistency.javakafka.kafkajava.entities.uml.models._class;
 
-public class ClassRelation {
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 
-	private String id;
-	private String type;
+public class ClassRelation extends UMLElement {
+
 	private String Class_1;
 	private String Class_2;
 	private String Role_Name_1;
 	private String Role_Name_2;
-	private String Visibility;
 	private int multipcity_Lower_1;
 	private int multipcity_Lower_2;
 	private int multipcity_Uper_1;
 	private int multipcity_Uper_2;
 	private boolean navigable_1;
 	private boolean Navigable_2;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 
 	public String getClass_1() {
 		return Class_1;
@@ -112,12 +95,13 @@ public class ClassRelation {
 		this.multipcity_Uper_2 = multipcity_Uper_2;
 	}
 
-	public String getVisibility() {
-		return Visibility;
+	@Override
+	public String toString() {
+		return "\n+Relation:" + super.toString() + "\n class 1: " + this.getClass_1() + " - class 2: "
+				+ this.getClass_2() + " - role name 1: " + this.getRole_Name_1() + " - role name 2: "
+				+ this.getRole_Name_2() + "\n multipcity lower 1: " + this.getMultipcity_Lower_1()
+				+ " - multipcity lower 2: " + this.getMultipcity_Lower_2() + " - multipcity uper 1: "
+				+ this.getMultipcity_Uper_1() + " - multipcity uper 2: " + this.getMultipcity_Uper_2()
+				+ " - isNavigable 1: " + this.isNavigable_1() + " - isNavigable 2: " + this.isNavigable_2();
 	}
-
-	public void setVisibility(String visibility) {
-		Visibility = visibility;
-	}
-
 }

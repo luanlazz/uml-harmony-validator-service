@@ -8,13 +8,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseUMLModel;
+import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseModel;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class InconsistencyErrorModelDeserializer implements Deserializer<InconsistencyErrorDTO> {
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseUMLModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -25,7 +25,7 @@ public class InconsistencyErrorModelDeserializer implements Deserializer<Inconsi
 				logger.warn("[InconsistencyErrorDTO] Null received at deserializing");
 				return null;
 			}
-			
+
 			return objectMapper.readValue(new String(data, "UTF-8"), InconsistencyErrorDTO.class);
 		} catch (Exception e) {
 			logger.error("[InconsistencyErrorDTO] Error when deserializing");

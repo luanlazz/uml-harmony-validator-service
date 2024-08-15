@@ -3,27 +3,16 @@ package com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 
-public class SequenceDiagram {
-	
-	private String _package;
+public class SequenceDiagram extends UMLElement {
+
 	private List<SequenceLifeline> lifelines = new ArrayList<>();
 	private List<SequenceMessage> messages = new ArrayList<>();
-	private List<ClassStructure> classes = new ArrayList<>();
-	private List<SequenceAttribute> attributes = new ArrayList<>();
 	private List<SequenceGate> gates = new ArrayList<>();
 	private List<SequenceBehavior> behaviors = new ArrayList<>();
 	private List<SequenceCombinedFragment> fragments = new ArrayList<>();
-	
-	public String getPackage() {
-		return _package;
-	}
 
-	public void setPackage(String _package) {
-		this._package = _package;
-	}
-	
 	public List<SequenceLifeline> getLifelines() {
 		return lifelines;
 	}
@@ -38,22 +27,6 @@ public class SequenceDiagram {
 
 	public void setMessages(List<SequenceMessage> messages) {
 		this.messages = messages;
-	}
-
-	public List<ClassStructure> getClasses() {
-		return classes;
-	}
-
-	public void setClasses(List<ClassStructure> classes) {
-		this.classes = classes;
-	}
-
-	public List<SequenceAttribute> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(List<SequenceAttribute> attributes) {
-		this.attributes = attributes;
 	}
 
 	public List<SequenceGate> getGates() {
@@ -78,5 +51,42 @@ public class SequenceDiagram {
 
 	public void setFragments(List<SequenceCombinedFragment> fragments) {
 		this.fragments = fragments;
+	}
+
+	@Override
+	public String toString() {
+		String output = super.toString();
+
+		output += "\n\n=== Lifelines:";
+
+		for (SequenceLifeline lifeline : this.getLifelines()) {
+			output += "\n" + lifeline.toString();
+		}
+
+		output += "\n\n=== Messages:";
+
+		for (SequenceMessage message : this.getMessages()) {
+			output += "\n" + message.toString();
+		}
+
+		output += "\n\n=== Gates:";
+
+		for (SequenceGate gate : this.getGates()) {
+			output += "\n" + gate.toString();
+		}
+
+		output += "\n\n=== Behaviors:";
+
+		for (SequenceBehavior behavior : this.getBehaviors()) {
+			output += "\n" + behavior.toString();
+		}
+
+		output += "\n\n=== Fragments:";
+
+		for (SequenceCombinedFragment fragment : this.getFragments()) {
+			output += "\n" + fragment.toString();
+		}
+
+		return output;
 	}
 }

@@ -8,56 +8,58 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.uml2.uml.Package;
 import org.eclipse.uml2.uml.PackageableElement;
 
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassInstance;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._enum.EnumStructure;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.PackageStructure;
 import com.inconsistency.javakafka.kafkajava.uml.reader.PackageReader;
-import com.inconsistency.javakafka.kafkajava.uml.reader.ReaderUtils;
 
 public class ClassDiagramReader implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public static ClassDiagram getRefModelDetails(Package _package) throws Exception {
+	public static List<ClassDiagram> getRefModelDetails(Package _package) throws Exception {
 		if (_package == null) {
 			throw new Exception("[Model] Package is null");
 		}
-	
+
 		EList<PackageableElement> packageableElements = _package.getPackagedElements();
-		String packageName = _package.getName() != null ? _package.getName() : "";
-		PackageStructure packageStructure = PackageReader.readPackage(packageableElements, packageName, _package);
+		PackageStructure packageStructure = PackageReader.readPackage(packageableElements, _package);
 
-		ArrayList<ClassStructure> classes = classStructures(packageStructure);
-		for (ClassStructure cs : classes) {
-			List<ClassStructure> superClasses = new ArrayList<>();
-			for (ClassStructure superClass : cs.getSuperClasses()) {
-				ClassStructure superClassByName = getClassByName(classes, superClass.getName());
-				if (superClassByName != null) {
-					superClasses.add(superClassByName);
-				}
-			}
-			cs.setSuperClasses(superClasses);
-		}
+		List<ClassDiagram> classDiagrams = new ArrayList<ClassDiagram>();
 
-		ArrayList<ClassInstance> instances = classInstances(packageStructure);
-		for (ClassInstance classInstance : instances) {
-			for (ClassStructure classStructure : classInstance.getClasses()) {
-//                classes.get(classStructure.getName()).getInstances().add(classInstance);
-				getClassByName(classes, classStructure.getName()).getInstances().add(classInstance);
+		if (packageStructure.getPackages().size() > 0) {
+			for (PackageStructure pkgStructure : packageStructure.getPackages()) {
+				ClassDiagram classDiagram = new ClassDiagram();
+				classDiagram.setId(pkgStructure.getId());
+				classDiagram.setName(pkgStructure.getName());
+				classDiagram.setVisibility(pkgStructure.getPackage().getVisibility().toString());
+				classDiagram.setType(ClassDiagram.class.toString());
+				classDiagram.setParentId(pkgStructure.getId());
+				classDiagram.getClasses().addAll(classStructures(pkgStructure));
+				classDiagram.getInstances().addAll(classInstances(pkgStructure));
+
+				classDiagrams.add(classDiagram);
 			}
 		}
 
-		ClassDiagram umlModel = new ClassDiagram();
-		umlModel.getEnumerations().addAll(enumStructure(packageStructure));
-		umlModel.getClasses().addAll(classes);
-		umlModel.getInstances().addAll(instances);
+		if (packageStructure.getClasses().size() > 0) {
+			ClassDiagram classDiagram = new ClassDiagram();
+			classDiagram.setId(packageStructure.getId());
+			classDiagram.setName(packageStructure.getName());
+			classDiagram.setVisibility(packageStructure.getPackage().getVisibility().toString());
+			classDiagram.setType(ClassDiagram.class.toString());
+			classDiagram.setParentId(packageStructure.getId());
+			classDiagram.getClasses().addAll(classStructures(packageStructure));
+			classDiagram.getInstances().addAll(classInstances(packageStructure));
 
-		return umlModel;
+			classDiagrams.add(classDiagram);
+		}
+
+		return classDiagrams;
 	}
 
-	private static ArrayList<ClassInstance> classInstances(PackageStructure packageStructure) {
+	protected static ArrayList<ClassInstance> classInstances(PackageStructure packageStructure) {
 		ArrayList<ClassInstance> instances = new ArrayList<>();
 
 		for (ClassInstance classInstance : packageStructure.getInstances()) {
@@ -70,7 +72,7 @@ public class ClassDiagramReader implements Serializable {
 		return instances;
 	}
 
-	private static ArrayList<ClassStructure> classStructures(PackageStructure packageStructure) {
+	protected static ArrayList<ClassStructure> classStructures(PackageStructure packageStructure) {
 		ArrayList<ClassStructure> classes = new ArrayList<>();
 
 		for (ClassStructure classStructure : packageStructure.getClasses()) {
@@ -83,7 +85,7 @@ public class ClassDiagramReader implements Serializable {
 		return classes;
 	}
 
-	private static ClassStructure getClassByName(ArrayList<ClassStructure> classes, String className) {
+	protected static ClassStructure getClassByName(List<ClassStructure> classes, String className) {
 		for (ClassStructure classStructure : classes) {
 			if (classStructure.getName().equals(className)) {
 				return classStructure;
@@ -93,7 +95,7 @@ public class ClassDiagramReader implements Serializable {
 		return null;
 	}
 
-	private static ArrayList<EnumStructure> enumStructure(PackageStructure packageStructure) {
+	protected static ArrayList<EnumStructure> enumStructure(PackageStructure packageStructure) {
 		ArrayList<EnumStructure> enums = new ArrayList<>();
 
 		for (EnumStructure classStructure : packageStructure.getEnums()) {

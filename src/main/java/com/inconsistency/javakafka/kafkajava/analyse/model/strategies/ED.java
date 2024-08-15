@@ -1,30 +1,26 @@
 package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
-import com.inconsistency.javakafka.kafkajava.entities.Context;
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModelInconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
-import com.inconsistency.javakafka.kafkajava.entities.Severity;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassOperation;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceDiagram;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceMessage;
 
 @Component
-public class ED extends AnalyseModel {
+public class ED extends AnalyseModelInconsistency {
 
 	public ED() {
-		super(new Inconsistency(InconsistencyType.ED, Severity.MEDIUM, Context.CLASS_SEQ_DIAGRAMS, "Mensagem",
-				"CR-63"));
+		super(new Inconsistency(InconsistencyType.ED, "Mensagem", "CR-63"));
 	}
 
 	@Override
@@ -34,45 +30,65 @@ public class ED extends AnalyseModel {
 	}
 
 	public void analyse() {
-		Map<String, List<ClassOperation>> classMethodsMap = new HashMap<>();
-		for (ClassStructure classStructure : this.getUMLModel().getClassDiagram().getClasses()) {
-			classMethodsMap.put(classStructure.getName(), classStructure.getOperations());
-		}
+		for (SequenceDiagram sequenceDiagram : this.getUMLModel().getSequenceDiagram()) {
+			for (SequenceMessage sequenceMessage : sequenceDiagram.getMessages()) {
+				if (sequenceMessage.getMessageType() == null
+						|| !(sequenceMessage.getMessageType().equals("createMessage")
+								|| sequenceMessage.getMessageType().equals("synchCall")
+								|| sequenceMessage.getMessageType().equals("asynchCall")
+								|| sequenceMessage.getMessageType().equals("asynchSignal")
+								|| sequenceMessage.getMessageType().equals("createMessage"))) {
+					continue;
+				}
 
-		for (SequenceMessage sequenceMessage : this.getUMLModel().getSequenceDiagram().getMessages()) {
-			if (sequenceMessage.getMessageType() == null || !(sequenceMessage.getMessageType().equals("createMessage")
-					|| sequenceMessage.getMessageType().equals("synchCall")
-					|| sequenceMessage.getMessageType().equals("asynchCall")
-					|| sequenceMessage.getMessageType().equals("asynchSignal")
-					|| sequenceMessage.getMessageType().equals("createMessage"))) {
-				continue;
-			}
+				String messageName = sequenceMessage.getMessageName();
+				String receiverName = sequenceMessage.getReceiver().getLifelineName();
 
-			String messageName = sequenceMessage.getMessageName();
-			String receiverName = sequenceMessage.getReceiver().getLifelineName();
+				List<ClassStructure> classesReceiver = this.getUMLModel().getClasses().stream().filter(c -> {
+					return c.getName().equals(receiverName);
+				}).toList();
 
-			List<ClassOperation> receiverMethods = classMethodsMap.get(receiverName);
-			ClassOperation receiverOperation = receiverMethods.stream().filter(op -> {
-				return op.getName().equals(messageName);
-			}).findFirst().orElse(null);
+				ClassOperation receiverOperation = null;
 
-			if (receiverOperation != null) {
-				continue;
-			}
+				for (ClassStructure _class : classesReceiver) {
+					receiverOperation = _class.getOperations().stream().filter(op -> {
+						return op.getName().equals(messageName);
+					}).findFirst().orElse(null);
 
-			String senderName = sequenceMessage.getSender().getLifelineName();
+					if (receiverOperation != null) {
+						break;
+					}
+				}
 
-			List<ClassOperation> senderMethods = classMethodsMap.get(senderName);
-			ClassOperation senderOperation = senderMethods.stream().filter(op -> {
-				return op.getName().equals(messageName);
-			}).findFirst().orElse(null);
+				if (receiverOperation != null) {
+					continue;
+				}
 
-			if (senderOperation != null) {
-				String errorMessage = "A mensagem " + messageName
-						+ " está na direção errada pois, está definida na classe " + senderName + ".";
-				InconsistencyError error = new InconsistencyError(messageName,
-						this.getUMLModel().getSequenceDiagram().getPackage(), errorMessage);
-				this.addError(error);
+				String senderName = sequenceMessage.getSender().getLifelineName();
+
+				List<ClassStructure> classesSender = this.getUMLModel().getClasses().stream().filter(c -> {
+					return c.getName().equals(senderName);
+				}).toList();
+
+				ClassOperation senderOperation = null;
+
+				for (ClassStructure _class : classesSender) {
+					senderOperation = _class.getOperations().stream().filter(op -> {
+						return op.getName().equals(messageName);
+					}).findFirst().orElse(null);
+
+					if (senderOperation != null) {
+						break;
+					}
+				}
+
+				if (senderOperation != null) {
+					String errorMessage = "A mensagem " + messageName
+							+ " está na direção errada pois, está definida na classe " + senderName + ".";
+					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
+							sequenceMessage.getParentId(), errorMessage);
+					this.addError(error);
+				}
 			}
 		}
 	}

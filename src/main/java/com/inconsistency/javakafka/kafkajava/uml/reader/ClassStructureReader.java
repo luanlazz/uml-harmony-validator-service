@@ -14,6 +14,7 @@ import org.eclipse.uml2.uml.Generalization;
 import org.eclipse.uml2.uml.LiteralUnlimitedNatural;
 import org.eclipse.uml2.uml.NamedElement;
 import org.eclipse.uml2.uml.Operation;
+import org.eclipse.uml2.uml.PackageableElement;
 import org.eclipse.uml2.uml.Parameter;
 import org.eclipse.uml2.uml.ParameterDirectionKind;
 import org.eclipse.uml2.uml.Property;
@@ -26,6 +27,7 @@ import org.eclipse.uml2.uml.internal.impl.InterfaceImpl;
 import org.eclipse.uml2.uml.internal.impl.OpaqueExpressionImpl;
 import org.eclipse.uml2.uml.internal.impl.PrimitiveTypeImpl;
 
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassAttribute;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassOperation;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassRelation;
@@ -36,10 +38,11 @@ import com.inconsistency.javakafka.kafkajava.uml.utils.Keywords;
 
 public class ClassStructureReader {
 
-	public static ClassStructure readClass(Element element, String packageName) {
+	public static ClassStructure readClass(Element element, PackageableElement _package) {
 		ClassStructure classStructure = new ClassStructure();
 
 		classStructure.setId(ReaderUtils.getXMLId(element));
+		classStructure.setParentId(ReaderUtils.getXMLId(_package));
 
 		Class _class = (Class) element;
 		List<String> rules = new ArrayList<>();
@@ -55,32 +58,32 @@ public class ClassStructureReader {
 			ClassStructure superClassStructure = new ClassStructure();
 			superClassStructure.setId(ReaderUtils.getXMLId(superClass));
 			superClassStructure.setName(superClass.getName());
-			superClassStructure.setPackage(superClass.getPackage().getName());
 			classStructure.addSuperClass(superClassStructure);
 		}
 
-		// System.out.println("\n -------- \n");
-
-		classStructure.setPackage(packageName);
 		classStructure.setVisibility(_class.getVisibility().toString());
 		classStructure.setRules(rules);
 		classStructure.setAbstract(_class.isAbstract());
 		classStructure.setFinal(_class.isLeaf());
 		classStructure.setName(_class.getName());
-		classStructure.setAttributes(readAttribute(_class.getOwnedAttributes()));
-		classStructure.setOperations(readClassOperations(_class.getOwnedOperations()));
-		classStructure.setRelationships(readClassRelations(_class.getRelationships()));
+		classStructure.setAttributes(readAttribute(_class, classStructure));
+		classStructure.setOperations(readClassOperations(_class, classStructure));
+		classStructure.setRelationships(readClassRelations(_class, classStructure));
 
 		for (NamedElement inheritedElement : _class.getInheritedMembers()) {
 			if (inheritedElement instanceof Property) {
 				Property property = (Property) inheritedElement;
 				ClassAttribute attribute = readAttribute(property);
+				attribute.setParentId(classStructure.getId());
+
 				if (attribute != null && attribute.getName() != null) {
 					classStructure.addAttribute(attribute);
 				}
 			} else if (inheritedElement instanceof Operation) {
 				Operation operation = (Operation) inheritedElement;
 				ClassOperation classOperation = readClassOperation(operation);
+				classOperation.setParentId(classStructure.getId());
+
 				if (classOperation != null) {
 					classStructure.addOperation(classOperation);
 				}
@@ -90,7 +93,8 @@ public class ClassStructureReader {
 		return classStructure;
 	}
 
-	public static ArrayList<ClassRelation> readClassRelations(EList<Relationship> classRelationships) {
+	public static ArrayList<ClassRelation> readClassRelations(Class _class, UMLElement parent) {
+		EList<Relationship> classRelationships = _class.getRelationships();
 		ArrayList<ClassRelation> list = new ArrayList<>();
 		for (Relationship relationship : classRelationships) {
 			if (relationship.eClass() == UMLPackage.Literals.ASSOCIATION) {
@@ -102,11 +106,13 @@ public class ClassStructureReader {
 		return list;
 	}
 
-	public static ArrayList<ClassOperation> readClassOperations(List<Operation> ownedOperations) {
+	public static ArrayList<ClassOperation> readClassOperations(Class _class, UMLElement parent) {
+		List<Operation> ownedOperations = _class.getOwnedOperations();
 		ArrayList<ClassOperation> operations = new ArrayList<>();
 		if (!ownedOperations.isEmpty()) {
 			for (Operation operation : ownedOperations) {
 				ClassOperation classOperation = readClassOperation(operation);
+				classOperation.setParentId(parent.getId());
 				if (classOperation != null) {
 					operations.add(classOperation);
 				}
@@ -277,11 +283,13 @@ public class ClassStructureReader {
 		return classOperation;
 	}
 
-	public static List<ClassAttribute> readAttribute(EList<Property> ownedAttributes) {
+	public static List<ClassAttribute> readAttribute(Class _class, UMLElement parent) {
+		EList<Property> ownedAttributes = _class.getOwnedAttributes();
 		List<ClassAttribute> attributes = new ArrayList<>();
 		if (!ownedAttributes.isEmpty()) {
 			for (Property property : ownedAttributes) {
 				ClassAttribute attribute = readAttribute(property);
+				attribute.setParentId(parent.getId());
 				if (attribute != null && attribute.getName() != null) {
 					attributes.add(attribute);
 				}

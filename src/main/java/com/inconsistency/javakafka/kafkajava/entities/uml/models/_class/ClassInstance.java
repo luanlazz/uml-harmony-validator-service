@@ -5,21 +5,12 @@ import java.util.List;
 
 public class ClassInstance {
 
-	private String _package;
 	private String name;
 	private List<ClassStructure> classes = new ArrayList<>();
 	private List<InstanceAttribute> attributes = new ArrayList<>();
 
 	public void addAttribute(InstanceAttribute attribute) {
 		this.attributes.add(attribute);
-	}
-
-	public String get_package() {
-		return _package;
-	}
-
-	public void set_package(String _package) {
-		this._package = _package;
 	}
 
 	public String getName() {

@@ -3,16 +3,11 @@ package com.inconsistency.javakafka.kafkajava.entities;
 public class Inconsistency {
 
 	private InconsistencyType inconsistencyType;
-	private Severity severity;
-	private Context context;
 	private String elementType;
 	private String consistenciesRules;
 
-	public Inconsistency(InconsistencyType inconsistencyType, Severity severity, Context context, String elementType,
-			String cr) {
+	public Inconsistency(InconsistencyType inconsistencyType, String elementType, String cr) {
 		this.setInconsistencyType(inconsistencyType);
-		this.setSeverity(severity);
-		this.setContext(context);
 		this.setElementType(elementType);
 		this.setConsistenciesRules(cr);
 	}
@@ -23,22 +18,6 @@ public class Inconsistency {
 
 	public void setInconsistencyType(InconsistencyType inconsistencyType) {
 		this.inconsistencyType = inconsistencyType;
-	}
-
-	public Severity getSeverity() {
-		return severity;
-	}
-
-	public void setSeverity(Severity severity) {
-		this.severity = severity;
-	}
-
-	public Context getContext() {
-		return context;
-	}
-
-	public void setContext(Context context) {
-		this.context = context;
 	}
 
 	public String getElementType() {

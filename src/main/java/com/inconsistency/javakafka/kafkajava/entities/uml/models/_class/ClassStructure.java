@@ -7,10 +7,9 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 
 public class ClassStructure extends UMLElement {
 
-	private String _package;
-	private List<String> imports = new ArrayList<>();
 	private boolean _abstract;
 	private boolean _final;
+	private List<String> imports = new ArrayList<>();
 	private List<String> rules = new ArrayList<>();
 	private List<ClassInstance> instances = new ArrayList<>();
 	private List<ClassStructure> superClasses = new ArrayList<>();
@@ -44,14 +43,6 @@ public class ClassStructure extends UMLElement {
 
 	public void addSuperClass(ClassStructure superClass) {
 		this.superClasses.add(superClass);
-	}
-
-	public String getPackage() {
-		return _package;
-	}
-
-	public void setPackage(String _package) {
-		this._package = _package;
 	}
 
 	public List<String> getImports() {
@@ -128,63 +119,54 @@ public class ClassStructure extends UMLElement {
 
 	@Override
 	public String toString() {
-		String output = "\nClass: " + this.getName() + "\n id: " + this.getId() + "\n package: " + this.getPackage()
-				+ "\n type: " + this.getType() + "\n visibility: " + this.getVisibility() + "\n isAbstract: "
-				+ this.isAbstract();
+		String output = super.toString() + "\n parent: " + this.getParentId() + "\n isAbstract: " + this.isAbstract();
 
 		if (this.getImports().size() > 0) {
-			output += "\nImports:";
+			output += "\n\n===Imports:";
 		}
 		for (String imp : this.getImports()) {
 			output += "\n name: " + imp;
 		}
 
 		if (this.getInstances().size() > 0) {
-			output += "\nInstances:";
+			output += "\n\n===Instances:";
 		}
 		for (ClassInstance ci : this.getInstances()) {
 			output += " name: " + ci.getName();
 		}
 
 		if (this.getRelationships().size() > 0) {
-			output += "\nRelations:";
+			output += "\n\n===Relations:";
 		}
 		for (ClassRelation cr : this.getRelationships()) {
-			output += "\n class 1: " + cr.getClass_1() + " - class 2: " + cr.getClass_2() + " - role name 1: "
-					+ cr.getRole_Name_1() + " - role name 2: " + cr.getRole_Name_2() + "\n multipcity lower 1: "
-					+ cr.getMultipcity_Lower_1() + " - multipcity lower 2: " + cr.getMultipcity_Lower_2()
-					+ " - multipcity uper 1: " + cr.getMultipcity_Uper_1() + " - multipcity uper 2: "
-					+ cr.getMultipcity_Uper_2() + " - isNavigable 1: " + cr.isNavigable_1() + " - isNavigable 2: "
-					+ cr.isNavigable_2();
+			output += cr.toString();
 		}
 
 		if (this.getSuperClasses().size() > 0) {
-			output += "\nSuper classes:";
+			output += "\n\n===Super classes:";
 		}
 		for (ClassStructure sc : this.getSuperClasses()) {
 			output += "\n name: " + sc.getName();
 		}
 
 		if (this.getAttributes().size() > 0) {
-			output += "\nAtributes:";
+			output += "\n\n===Atributes:";
 		}
 		for (ClassAttribute ca : this.getAttributes()) {
-			output += "\n name: " + ca.getName() + " - visibility: " + ca.getVisibility() + " - type: " + ca.getType();
+			output += ca.toString();
 		}
 
 		if (this.getOperations().size() > 0) {
-			output += "\nFunctions:";
+			output += "\n\n===Functions:";
 		}
 		for (ClassOperation co : this.getOperations()) {
-			output += "\n name: " + co.getName() + " - visibility: " + co.getVisibility() + " - return type: "
-					+ co.getReturnType().getType();
+			output += co.toString();
 
 			if (co.getParameters().size() > 0) {
 				output += "\nParameters:";
 			}
 			for (OperationParameter op : co.getParameters()) {
-				output += "\n name: " + op.getName() + " - visibility: " + op.getVisibility() + " - type: "
-						+ op.getType();
+				output += op.toString();
 			}
 		}
 

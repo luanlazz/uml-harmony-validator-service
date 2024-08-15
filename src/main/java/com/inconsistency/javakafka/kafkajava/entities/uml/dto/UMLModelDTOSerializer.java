@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseUMLModel;
+import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseModel;
 
 public class UMLModelDTOSerializer implements Serializer<UMLModelDTO> {
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseUMLModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 

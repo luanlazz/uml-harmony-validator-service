@@ -78,9 +78,6 @@ public class OperationReturn {
 
 	@Override
 	public String toString() {
-		String output = "\n  id: " + this.getId() + "\n  type: " + this.getType() + "\n  Class: " + this.getClass()
-				+ "\n  collection: " + this.isCollection();
-
-		return output;
+		return super.toString() + "\n  Class: " + this.getClass() + "\n  collection: " + this.isCollection();
 	}
 }

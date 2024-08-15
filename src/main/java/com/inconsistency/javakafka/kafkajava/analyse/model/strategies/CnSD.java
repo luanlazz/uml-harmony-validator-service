@@ -1,29 +1,22 @@
 package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
-import com.inconsistency.javakafka.kafkajava.entities.Context;
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModelInconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
-import com.inconsistency.javakafka.kafkajava.entities.Severity;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
 
 @Component
-public class CnSD extends AnalyseModel {
+public class CnSD extends AnalyseModelInconsistency {
 
 	public CnSD() {
-		super(new Inconsistency(InconsistencyType.CnSD, Severity.HIGH, Context.CLASS_SEQ_DIAGRAMS, "Classe",
-				"CR-65 e CR-83"));
+		super(new Inconsistency(InconsistencyType.CnSD, "Classe", "CR-65 e CR-83"));
 	}
 
 	@Override
@@ -34,19 +27,15 @@ public class CnSD extends AnalyseModel {
 
 	@Override
 	public void analyse() {
-		Map<String, SequenceLifeline> sequenceLifelineMap = new HashMap<>();
+		for (ClassStructure classStructure : this.getUMLModel().getClasses()) {
+			SequenceLifeline lifeline = this.getUMLModel().getLifelines().stream().filter(l -> {
+				return l.getName().equals(classStructure.getName());
+			}).findFirst().orElse(null);
 
-		for (SequenceLifeline lifeline : this.getUMLModel().getSequenceDiagram().getLifelines()) {
-			sequenceLifelineMap.put(lifeline.getLifelineName(), lifeline);
-		}
-
-		ClassDiagram classDiagram = this.getUMLModel().getClassDiagram();
-
-		for (ClassStructure classStructure : classDiagram.getClasses()) {
-			if (!classStructure.isAbstract() && sequenceLifelineMap.get(classStructure.getName()) == null) {
+			if (!classStructure.isAbstract() && lifeline == null) {
 				String errorMessage = "A classe " + classStructure.getName()
 						+ " não foi instanciada no diagrama de sequencia.";
-				InconsistencyError error = new InconsistencyError(classStructure.getName(), classStructure.getPackage(),
+				InconsistencyError error = new InconsistencyError(classStructure.getId(), classStructure.getParentId(),
 						errorMessage);
 				this.addError(error);
 			}

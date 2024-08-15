@@ -85,11 +85,8 @@ public class ClassAttribute extends UMLElement {
 
 	@Override
 	public String toString() {
-		String output = "\nId: " + this.getId() + "\nName: " + this.getName() + "\ntype: " + this.getType()
-				+ "\nvisibility: " + this.getVisibility() + "\nvalue: " + this.getValue() + "\nisClass: "
-				+ this.isClass() + "\nisEnum: " + this.isEnum() + "\nStatic: " + this.isStatic() + "\nisCollection: "
+		return "\n\n+Attribute: " + super.toString() + "\n Value: " + this.getValue() + "\n isClass: " + this.isClass()
+				+ "\n isEnum: " + this.isEnum() + "\n Static: " + this.isStatic() + "\n isCollection: "
 				+ this.isCollection();
-
-		return output;
 	}
 }

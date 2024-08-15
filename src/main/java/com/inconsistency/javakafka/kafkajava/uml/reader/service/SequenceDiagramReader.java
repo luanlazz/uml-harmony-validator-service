@@ -1,69 +1,64 @@
 package com.inconsistency.javakafka.kafkajava.uml.reader.service;
 
-import org.eclipse.emf.common.util.EList;
-
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.PackageStructure;
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.*;
-import com.inconsistency.javakafka.kafkajava.uml.reader.ClassStructureReader;
-import com.inconsistency.javakafka.kafkajava.uml.reader.PackageReader;
-import com.inconsistency.javakafka.kafkajava.uml.utils.Keywords;
-import org.eclipse.uml2.uml.Class;
-import org.eclipse.uml2.uml.*;
-import org.eclipse.uml2.uml.Package;
-import org.eclipse.uml2.uml.internal.impl.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.uml2.uml.CombinedFragment;
+import org.eclipse.uml2.uml.Gate;
+import org.eclipse.uml2.uml.InteractionFragment;
+import org.eclipse.uml2.uml.InteractionOperand;
+import org.eclipse.uml2.uml.Lifeline;
+import org.eclipse.uml2.uml.Message;
+import org.eclipse.uml2.uml.MessageEnd;
+import org.eclipse.uml2.uml.MessageOccurrenceSpecification;
+import org.eclipse.uml2.uml.NamedElement;
+import org.eclipse.uml2.uml.Package;
+import org.eclipse.uml2.uml.PackageableElement;
+import org.eclipse.uml2.uml.UMLPackage;
+import org.eclipse.uml2.uml.internal.impl.BehaviorExecutionSpecificationImpl;
+import org.eclipse.uml2.uml.internal.impl.InteractionImpl;
+import org.eclipse.uml2.uml.internal.impl.MessageOccurrenceSpecificationImpl;
+import org.eclipse.uml2.uml.internal.impl.OpaqueExpressionImpl;
+
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceBehavior;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceCombinedFragment;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceDiagram;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceGate;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
+import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceMessage;
+import com.inconsistency.javakafka.kafkajava.uml.reader.ReaderUtils;
+import com.inconsistency.javakafka.kafkajava.uml.utils.Keywords;
 
 public class SequenceDiagramReader implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public static SequenceDiagram getRefModelDetails(Package _package) throws Exception {
+	public static List<SequenceDiagram> getRefModelDetails(Package _package) throws Exception {
 		if (_package == null) {
 			throw new Exception("[SequenceDiagram] Package is null");
 		}
 
 		EList<PackageableElement> packageableElements = _package.getPackagedElements();
-		String packageName = _package.getName() != null ? _package.getName() : "";
 
-		SequenceDiagram sequenceDiagram = new SequenceDiagram();
-		sequenceDiagram.setPackage(packageName);
+		List<SequenceDiagram> sequenceDiagrams = new ArrayList<SequenceDiagram>();
 
 		for (PackageableElement element : packageableElements) {
-
-			if (element.eClass() == UMLPackage.Literals.CLASS) {
-				Class umlClass = (Class) element;
-				ClassStructure structure = ClassStructureReader.readClass(umlClass, null);
-				sequenceDiagram.getClasses().add(structure);
-			}
-			if (element.eClass() == UMLPackage.Literals.COLLABORATION) {
-				CollaborationImpl collaborationImpl = (CollaborationImpl) element;
-
-				for (Property property : collaborationImpl.getAttributes()) {
-					SequenceAttribute attribute = new SequenceAttribute(property.getName(),
-							property.getType().getName());
-					sequenceDiagram.getAttributes().add(attribute);
-				}
-
-				if (collaborationImpl.getOwnedBehaviors() != null) {
-					for (Element element2 : collaborationImpl.getOwnedBehaviors()) {
-						if (element2.eClass() == UMLPackage.Literals.INTERACTION) {
-							InteractionImpl interactionImpl = (InteractionImpl) element2;
-							interactionReader(interactionImpl, sequenceDiagram);
-						}
-					}
-				}
-			}
-
 			if (element.eClass() == UMLPackage.Literals.INTERACTION && element instanceof InteractionImpl) {
 				InteractionImpl interactionImpl = (InteractionImpl) element;
-				interactionReader(interactionImpl, sequenceDiagram);
-			}
 
+				SequenceDiagram sequenceDiagram = new SequenceDiagram();
+				sequenceDiagram.setName(interactionImpl.getName());
+				sequenceDiagram.setId(ReaderUtils.getXMLId(element));
+				interactionReader(interactionImpl, sequenceDiagram, element);
+
+				sequenceDiagrams.add(sequenceDiagram);
+			}
 		}
 
-		return sequenceDiagram;
+		return sequenceDiagrams;
 	}
 
 	/**
@@ -74,8 +69,8 @@ public class SequenceDiagramReader implements Serializable {
 	 *                        gates,MessageOccurrence,CombinedFragment,BehaviorExecution
 	 */
 
-	private static void interactionReader(InteractionImpl interactionImpl, SequenceDiagram sequenceDiagram) {
-
+	protected static void interactionReader(InteractionImpl interactionImpl, SequenceDiagram sequenceDiagram,
+			PackageableElement _package) {
 		for (InteractionFragment interactionFragment : interactionImpl.getFragments()) {
 			// reading behaviors
 			if (interactionFragment instanceof BehaviorExecutionSpecificationImpl) {
@@ -102,12 +97,31 @@ public class SequenceDiagramReader implements Serializable {
 
 		// LifLines
 		for (Lifeline lifeline : interactionImpl.getLifelines()) {
-			sequenceDiagram.getLifelines().add(lifelineReader(lifeline));
+			SequenceLifeline lifelineReader = lifelineReader(lifeline);
+			lifelineReader.setParentId(sequenceDiagram.getId());
+			sequenceDiagram.getLifelines().add(lifelineReader);
 		}
 
 		// Messages
 		for (Message message : interactionImpl.getMessages()) {
-			sequenceDiagram.getMessages().add(messageReader(message));
+			SequenceMessage messageReader = messageReader(message);
+
+			SequenceLifeline sequenceLifeline = sequenceDiagram.getLifelines().stream()
+					.filter(l -> l.getName().equals(messageReader.getSender().getLifelineName())).findFirst()
+					.orElse(null);
+			if (sequenceLifeline != null) {
+				messageReader.setSender(sequenceLifeline);
+				messageReader.setParentId(sequenceLifeline.getId());
+			}
+
+			sequenceLifeline = sequenceDiagram.getLifelines().stream()
+					.filter(l -> l.getName().equals(messageReader.getReceiver().getLifelineName())).findFirst()
+					.orElse(null);
+			if (sequenceLifeline != null) {
+				messageReader.setReceiver(sequenceLifeline);
+			}
+
+			sequenceDiagram.getMessages().add(messageReader);
 		}
 
 	}
@@ -189,6 +203,8 @@ public class SequenceDiagramReader implements Serializable {
 	private static SequenceCombinedFragment fragmentReader(CombinedFragment combinedFragment) {
 
 		SequenceCombinedFragment sequenceCombinedFragment = new SequenceCombinedFragment();
+		sequenceCombinedFragment.setId(ReaderUtils.getXMLId(combinedFragment));
+
 		for (Lifeline lifeline : combinedFragment.getCovereds()) {
 			SequenceLifeline fragmentLifeline = lifelineReader(lifeline);
 			sequenceCombinedFragment.addSequenceLifeline(fragmentLifeline);
@@ -200,7 +216,7 @@ public class SequenceDiagramReader implements Serializable {
 			if (interactionOperand.getGuard() == null) {
 				continue;
 			}
-			
+
 			OpaqueExpressionImpl opaqueExpressionImpl = (OpaqueExpressionImpl) interactionOperand.getGuard()
 					.getSpecification();
 			sequenceCombinedFragment.setCondition(opaqueExpressionImpl.getBodies().get(0));
@@ -230,6 +246,11 @@ public class SequenceDiagramReader implements Serializable {
 	 */
 	private static SequenceBehavior behaviorReader(BehaviorExecutionSpecificationImpl fragment) {
 		SequenceBehavior behavior = new SequenceBehavior();
+		behavior.setId(ReaderUtils.getXMLId(fragment));
+		behavior.setName(fragment.getName());
+		behavior.setVisibility(fragment.getVisibility().toString());
+		behavior.setType(SequenceBehavior.class.toString());
+
 		for (Lifeline lifeline : fragment.getCovereds()) {
 			behavior.setLifeline(lifelineReader(lifeline));
 		}
@@ -254,6 +275,10 @@ public class SequenceDiagramReader implements Serializable {
 	 */
 	private static SequenceGate gateReader(Gate gate) {
 		SequenceGate sequenceGate = new SequenceGate();
+		sequenceGate.setId(ReaderUtils.getXMLId(gate));
+		sequenceGate.setName(gate.getName());
+		sequenceGate.setVisibility(gate.getVisibility().toString());
+		sequenceGate.setType(SequenceGate.class.toString());
 		sequenceGate.setGateMessage(gate.getMessage().getName());
 		MessageEnd interactionFragment = gate.getMessage().getReceiveEvent();
 
@@ -277,11 +302,27 @@ public class SequenceDiagramReader implements Serializable {
 	 */
 	private static SequenceLifeline lifelineReader(Lifeline lifeline) {
 		SequenceLifeline sequenceLifeline = new SequenceLifeline();
+		sequenceLifeline.setId(ReaderUtils.getXMLId(lifeline));
+		sequenceLifeline.setName(lifeline.getName());
+		sequenceLifeline.setVisibility(lifeline.getVisibility().toString());
+		sequenceLifeline.setType(SequenceLifeline.class.toString());
 		sequenceLifeline.setLifelineName(lifeline.getName());
 		if (lifeline.getRepresents() != null) {
 			sequenceLifeline.setRepresents(lifeline.getRepresents().getName());
 		}
 		return sequenceLifeline;
+	}
+
+	protected static ArrayList<SequenceLifeline> packageLifelines(List<SequenceDiagram> sequenceDiagrams) {
+		ArrayList<SequenceLifeline> sequenceLifelines = new ArrayList<>();
+
+		for (SequenceDiagram sequenceDiagram : sequenceDiagrams) {
+			for (SequenceLifeline lifeline : sequenceDiagram.getLifelines()) {
+				sequenceLifelines.add(lifeline);
+			}
+		}
+
+		return sequenceLifelines;
 	}
 
 	/**
@@ -297,6 +338,10 @@ public class SequenceDiagramReader implements Serializable {
 		}
 
 		SequenceMessage sequenceMessage = new SequenceMessage();
+		sequenceMessage.setId(ReaderUtils.getXMLId(message));
+		sequenceMessage.setVisibility(message.getVisibility().toString());
+		sequenceMessage.setType(SequenceMessage.class.toString());
+
 		if (message.getSignature() != null) {
 			NamedElement signature = message.getSignature();
 			sequenceMessage.setMessageName(signature.getName());
@@ -306,12 +351,25 @@ public class SequenceDiagramReader implements Serializable {
 			sequenceMessage.setMessageName("");
 			sequenceMessage.setMessageType(message.getMessageSort().toString());
 
-		} else if (!message.getName().isEmpty() && !message.getName().contains("(") && !message.getName().contains(")")
-				&& !message.getName().contains(" ")) {
-			sequenceMessage.setMessageName(message.getName());
+		} else if (!message.getName().isEmpty()) {
+			String messageName = message.getName();
+			
+			if (message.getName().contains("(") || message.getName().contains(")")) {
+				String regex = "^\\s*(?:^\\s*([a-zA-Z_]\\w+)\\s*[\\(|)]?\\s*|\\G,\\s*)(\\s*([a-zA-Z_]\\w+)\\s+([a-zA-Z_]\\w+),?)*\\)?\\s*$";
+				
+				Pattern pattern = Pattern.compile(regex, Pattern.COMMENTS | Pattern.MULTILINE);
+		        final Matcher matcher = pattern.matcher(messageName);
+		        
+		        if (matcher.matches() && matcher.groupCount() > 2 && !matcher.group(1).isEmpty()) {
+		        	messageName = matcher.group(1);		        	
+		        }
+			}
+			
+			sequenceMessage.setMessageName(messageName);
 			sequenceMessage.setMessageType(message.getMessageSort().toString());
 		}
-		// TODO mensagem com ()
+
+		sequenceMessage.setName(sequenceMessage.getMessageName());
 
 		// Send Event
 		if (message.getSendEvent() instanceof MessageOccurrenceSpecification) {
@@ -342,4 +400,15 @@ public class SequenceDiagramReader implements Serializable {
 		return sequenceMessage;
 	}
 
+	protected static ArrayList<SequenceMessage> packageMessages(List<SequenceDiagram> sequenceDiagrams) {
+		ArrayList<SequenceMessage> sequenceMessages = new ArrayList<>();
+
+		for (SequenceDiagram sequenceDiagram : sequenceDiagrams) {
+			for (SequenceMessage sequenceMessage : sequenceDiagram.getMessages()) {
+				sequenceMessages.add(sequenceMessage);
+			}
+		}
+
+		return sequenceMessages;
+	}
 }

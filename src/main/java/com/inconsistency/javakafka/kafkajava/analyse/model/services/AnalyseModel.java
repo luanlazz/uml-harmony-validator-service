@@ -2,8 +2,6 @@ package com.inconsistency.javakafka.kafkajava.analyse.model.services;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -27,8 +25,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
+import com.inconsistency.javakafka.kafkajava.controller.InconsistenciesResponse;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTOComparator;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.uml.reader.service.UMLModelReaderService;
 
@@ -39,9 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Component("receiveModifications")
-public class AnalyseUMLModel {
+public class AnalyseModel {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseUMLModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
 
 	@Value("${spring.kafka.topic.model-analyze}")
 	private String topicModelToAnalyze;
@@ -56,7 +54,7 @@ public class AnalyseUMLModel {
 
 	private final StreamsBuilderFactoryBean factoryBean;
 
-	public AnalyseUMLModel(StreamsBuilderFactoryBean factoryBean) {
+	public AnalyseModel(StreamsBuilderFactoryBean factoryBean) {
 		this.factoryBean = factoryBean;
 	}
 
@@ -98,7 +96,9 @@ public class AnalyseUMLModel {
 		return clientId;
 	}
 
-	public List<InconsistencyErrorDTO> getInconsistenciesByClientId(String clientId) {
+	public InconsistenciesResponse getInconsistenciesByClientId(String clientId) {
+		InconsistenciesResponse inconsistenciesResponse = new InconsistenciesResponse();
+
 		KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
 
 		ReadOnlyKeyValueStore<String, List<InconsistencyErrorDTO>> inconsistencies = kafkaStreams
@@ -108,14 +108,14 @@ public class AnalyseUMLModel {
 		List<InconsistencyErrorDTO> clientInconsistencies = new ArrayList<InconsistencyErrorDTO>();
 		clientInconsistencies = inconsistencies.get(clientId);
 		if (clientInconsistencies == null || clientInconsistencies.size() == 0) {
-			return clientInconsistencies;
+			return inconsistenciesResponse;
 		}
+		
+		ModelMetrics metrics = new ModelMetrics();
+		
+		metrics.computeElementsModel(clientInconsistencies,inconsistenciesResponse);
+		metrics.computeModelMetrics(clientInconsistencies, inconsistenciesResponse);
 
-		Comparator<InconsistencyErrorDTO> comparatorReverseOrder = Collections
-				.reverseOrder(new InconsistencyErrorDTOComparator());
-
-		Collections.sort(clientInconsistencies, comparatorReverseOrder);
-
-		return clientInconsistencies;
+		return inconsistenciesResponse;
 	}
 }

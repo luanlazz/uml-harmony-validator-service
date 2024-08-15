@@ -43,9 +43,8 @@ public class OperationParameter extends UMLElement {
 
 	@Override
 	public String toString() {
-		String output = "\nId: " + this.getId() + "\nname: " + this.getName() + "\ntype: " + this.getType()
-				+ "\nvisibility: " + this.getVisibility() + "\ndirection: " + this.getDirection() + "\nvalue: "
-				+ this.getValue() + "\nClass: " + this.isClass() + "\ncollection: " + this.isCollection();
+		String output = super.toString() + "\n direction: " + this.getDirection() + "\n value: " + this.getValue()
+				+ "\n Class: " + this.isClass() + "\n collection: " + this.isCollection();
 
 		return output;
 	}

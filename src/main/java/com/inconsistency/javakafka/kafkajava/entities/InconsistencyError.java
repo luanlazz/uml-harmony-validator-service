@@ -2,31 +2,31 @@ package com.inconsistency.javakafka.kafkajava.entities;
 
 public class InconsistencyError {
 
-	private String propertyName;
-	private String umlPackage;
+	private String elId;
+	private String diagramId;
 	private String message;
 
-	public InconsistencyError(String propertyName, String umlPackage, String message) {
+	public InconsistencyError(String elId, String diagramId, String message) {
 		super();
-		this.propertyName = propertyName;
-		this.umlPackage = umlPackage;
+		this.elId = elId;
+		this.diagramId = diagramId;
 		this.message = message;
 	}
 
-	public String getPropertyName() {
-		return propertyName;
+	public String getElId() {
+		return elId;
 	}
 
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
+	public void setElId(String elId) {
+		this.elId = elId;
 	}
 
-	public String getUmlPackage() {
-		return umlPackage;
+	public String getDiagramId() {
+		return diagramId;
 	}
 
-	public void setUmlPackage(String umlPackage) {
-		this.umlPackage = umlPackage;
+	public void setDiagramId(String diagramId) {
+		this.diagramId = diagramId;
 	}
 
 	public String getMessage() {
@@ -39,7 +39,7 @@ public class InconsistencyError {
 
 	@Override
 	public String toString() {
-		return " - Property: " + this.getPropertyName() + " - Package: " + this.getUmlPackage() + "\nMessage: "
-				+ this.getMessage();
+		return "\n Message: " + this.getMessage() + "\n elId: " + this.getElId() + "\n diagramId: "
+				+ this.getDiagramId();
 	}
 }

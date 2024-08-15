@@ -1,6 +1,8 @@
 package com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence;
 
-public class SequenceLifeline {
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
+
+public class SequenceLifeline extends UMLElement {
 
 	private String lifelineName;
 	private String represents;
@@ -32,6 +34,7 @@ public class SequenceLifeline {
 
 	@Override
 	public String toString() {
-		return "\nLifeLines \n name: " + this.getLifelineName() + " - represents: " + this.getRepresents();
+		return "\n\n+LifeLine:" + super.toString() + "\n lifeline name: " + this.getLifelineName() + " - represents: "
+				+ this.getRepresents();
 	}
 }

@@ -2,9 +2,10 @@ package com.inconsistency.javakafka.kafkajava.entities.uml.models._class;
 
 import java.util.ArrayList;
 
+import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._enum.EnumStructure;
 
-public class ClassDiagram {
+public class ClassDiagram extends UMLElement {
 
 	private ArrayList<ClassStructure> classes = new ArrayList<>();
 	private ArrayList<ClassInstance> instances = new ArrayList<>();
