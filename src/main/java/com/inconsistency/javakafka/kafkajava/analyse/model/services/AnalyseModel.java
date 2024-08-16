@@ -2,6 +2,8 @@ package com.inconsistency.javakafka.kafkajava.analyse.model.services;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -17,7 +19,9 @@ import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -27,11 +31,13 @@ import org.springframework.web.multipart.MultipartFile;
 import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
 import com.inconsistency.javakafka.kafkajava.controller.InconsistenciesResponse;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTOComparator;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.uml.reader.service.UMLModelReaderService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import redis.clients.jedis.Jedis;
 
 @Slf4j
 @Service
@@ -54,6 +60,9 @@ public class AnalyseModel {
 
 	private final StreamsBuilderFactoryBean factoryBean;
 
+	@Autowired
+	private RedisTemplate<String, UMLModelDTO> redisTemplate;
+
 	public AnalyseModel(StreamsBuilderFactoryBean factoryBean) {
 		this.factoryBean = factoryBean;
 	}
@@ -70,9 +79,11 @@ public class AnalyseModel {
 
 		String clientId = System.currentTimeMillis() + String.valueOf(counter.incrementAndGet());
 
-		KafkaProducer<String, UMLModelDTO> producer = ProducerConfiguration
+		this.redisTemplate.opsForValue().set(clientId, umlModel);
+
+		KafkaProducer<String, String> producer = ProducerConfiguration
 				.createKafkaProducerAnalyseModel(bootstrapServers);
-		ProducerRecord<String, UMLModelDTO> record = new ProducerRecord<>(topicModelToAnalyze, clientId, umlModel);
+		ProducerRecord<String, String> record = new ProducerRecord<>(topicModelToAnalyze, clientId, clientId);
 		Future<RecordMetadata> future = producer.send(record, new Callback() {
 			@Override
 			public void onCompletion(RecordMetadata metadata, Exception exception) {
@@ -110,11 +121,18 @@ public class AnalyseModel {
 		if (clientInconsistencies == null || clientInconsistencies.size() == 0) {
 			return inconsistenciesResponse;
 		}
-		
+
 		ModelMetrics metrics = new ModelMetrics();
-		
-		metrics.computeElementsModel(clientInconsistencies,inconsistenciesResponse);
+
+		UMLModelDTO umlModel = this.redisTemplate.opsForValue().get(clientId);
+
+		metrics.computeElementsModel(clientInconsistencies, umlModel, inconsistenciesResponse);
 		metrics.computeModelMetrics(clientInconsistencies, inconsistenciesResponse);
+		
+		Comparator<InconsistencyErrorDTO> comparatorReverseOrder = Collections
+				.reverseOrder(new InconsistencyErrorDTOComparator());
+		Collections.sort(clientInconsistencies, comparatorReverseOrder);
+		inconsistenciesResponse.getInconsistencies().addAll(clientInconsistencies);
 
 		return inconsistenciesResponse;
 	}

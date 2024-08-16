@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,6 +46,9 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 	private Inconsistency inconsistency;
 	private UMLModelDTO umlModel;
 	private String clientId;
+
+	@Autowired
+	private RedisTemplate<String, UMLModelDTO> redisTemplate;
 
 	@Autowired
 	public AnalyseModelInconsistency(Inconsistency inconsistency) {
@@ -94,8 +99,6 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 
 		errorModel.setParentId(error.getDiagramId());
 
-		errorModel.setModel(this.getUMLModel());
-
 		sendError(errorModel);
 	}
 
@@ -125,17 +128,22 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 	}
 
 	@Override
-	public void listenTopic(ConsumerRecord<String, UMLModelDTO> record) {
+	public void listenTopic(ConsumerRecord<String, String> record) {
 		throw new NotImplementedException();
 	}
 
 	@Override
-	public void handleEvent(ConsumerRecord<String, UMLModelDTO> record) {
+	public void handleEvent(ConsumerRecord<String, String> record) {
 		try {
 			logger.info("[{}] Received key: {}", this.getInconsistency().getInconsistencyType().name(), record.key());
 
 			this.setClientId(record.key());
-			this.setUMLModel(record.value());
+
+			UMLModelDTO umlModelRedis = this.redisTemplate.opsForValue().get(record.value());
+			if (umlModelRedis == null) {
+				throw new EntityNotFoundException("Model not found to Analyse");
+			}
+			this.setUMLModel(umlModelRedis);
 
 			this.analyse();
 		} catch (Exception e) {

@@ -28,8 +28,6 @@ public class InconsistencyErrorDTO implements Serializable {
 
 	private String parentId;
 
-	private UMLModelDTO model;
-
 	public String getClientId() {
 		return clientId;
 	}
@@ -137,13 +135,5 @@ public class InconsistencyErrorDTO implements Serializable {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
-	}
-
-	public UMLModelDTO getModel() {
-		return model;
-	}
-
-	public void setModel(UMLModelDTO model) {
-		this.model = model;
 	}
 }

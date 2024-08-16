@@ -35,10 +35,8 @@ public class ModelMetrics {
 	Map<String, List<InconsistencyConcentration>> concetrationClassSeq = new HashMap<String, List<InconsistencyConcentration>>();
 
 	public InconsistenciesResponse computeElementsModel(List<InconsistencyErrorDTO> clientInconsistencies,
-			InconsistenciesResponse inconsistenciesResponse) {
+			UMLModelDTO umlModel, InconsistenciesResponse inconsistenciesResponse) {
 		numInconsistencies = clientInconsistencies.size();
-
-		UMLModelDTO umlModel = clientInconsistencies.get(0).getModel();
 
 		packages.clear();
 		elements.clear();
@@ -72,12 +70,6 @@ public class ModelMetrics {
 		inconsistenciesResponse.getDiagramsElements().addAll(combinedList);
 
 		computeConcentrationByInconsistency(clientInconsistencies, combinedList);
-
-		clientInconsistencies.forEach(i -> i.setModel(null));
-		Comparator<InconsistencyErrorDTO> comparatorReverseOrder = Collections
-				.reverseOrder(new InconsistencyErrorDTOComparator());
-		Collections.sort(clientInconsistencies, comparatorReverseOrder);
-		inconsistenciesResponse.getInconsistencies().addAll(clientInconsistencies);
 
 		return inconsistenciesResponse;
 	}

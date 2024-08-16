@@ -16,9 +16,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.listener.ContainerProperties;
 
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTODeserializer;
-
 @EnableKafka
 @Configuration
 public class ConsumerConfiguration {
@@ -30,21 +27,21 @@ public class ConsumerConfiguration {
 	private String groupId;
 
 	@Bean("UMLAnalyseConsumerFactory")
-	public ConsumerFactory<String, UMLModelDTO> createUMLAnalyseConsumerFactory() {
+	public ConsumerFactory<String, String> createUMLAnalyseConsumerFactory() {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
 		props.put(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
 		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, UMLModelDTODeserializer.class);
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
-		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new UMLModelDTODeserializer());
+		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), new StringDeserializer());
 	}
 
 	@Bean("UMLAnalyseContainerFactory")
-	public ConcurrentKafkaListenerContainerFactory<String, UMLModelDTO> createUMLAnalyseKafkaListenerContainerFactory() {
-		ConcurrentKafkaListenerContainerFactory<String, UMLModelDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	public ConcurrentKafkaListenerContainerFactory<String, String> createUMLAnalyseKafkaListenerContainerFactory() {
+		ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(createUMLAnalyseConsumerFactory());
 		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
 		return factory;

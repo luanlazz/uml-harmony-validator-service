@@ -9,3 +9,8 @@ spring:
       inconsistencies-errors: inconsistencies.errors
       inconsistencies-by-client: inconsistencies.by.client
     store-inconsistencies: uml.inconsistencies.client.id
+
+  redis:
+      host: localhost
+      port: 6379
+

@@ -11,7 +11,6 @@ import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModelInconsist
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
 
 @Component
@@ -23,7 +22,7 @@ public class CM extends AnalyseModelInconsistency {
 
 	@Override
 	@KafkaListener(topics = "${spring.kafka.topic.model-analyze}", groupId = "cm", clientIdPrefix = "cm", containerFactory = "UMLAnalyseContainerFactory")
-	public void listenTopic(ConsumerRecord<String, UMLModelDTO> record) {
+	public void listenTopic(ConsumerRecord<String, String> record) {
 		super.handleEvent(record);
 	}
 

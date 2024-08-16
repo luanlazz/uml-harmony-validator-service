@@ -23,7 +23,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorModelSerializer;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTOSerializer;
 
 @EnableKafka
 @Configuration
@@ -55,13 +54,13 @@ public class ProducerConfiguration {
 		return new KafkaTemplate<>(createProducerFactory());
 	}
 
-	public static KafkaProducer<String, UMLModelDTO> createKafkaProducerAnalyseModel(String bootstrapServers) {
+	public static KafkaProducer<String, String> createKafkaProducerAnalyseModel(String bootstrapServers) {
 		Properties props = new Properties();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, UMLModelDTOSerializer.class);
+		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 
-		return new KafkaProducer<String, UMLModelDTO>(props);
+		return new KafkaProducer<String, String>(props);
 	}
 
 	public static KafkaProducer<String, InconsistencyErrorDTO> createKafkaProducerInconsistencyErrorModel(
