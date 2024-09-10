@@ -15,21 +15,24 @@ The program analyzes UML diagrams class and sequence to find inconsistencies bas
 - Mensagem sem Método (EcM);
 - Classe abstrata instanciada no SD (CaSD);
 - Mensagem para função privada em CD (EpM)
+  
+## Step by step to run
 
-#### Contribution
-
-UML Parser is based on the [Eclipse modeling models reader](https://github.com/hammadirshad/emf-uml-model-reader). Selected parsers needed to analyze inconsistencies were used. In addition, some small modifications/adaptations in treatment.
-
-## Instructions to run
-
-1. in terminal, move to `/src/main/resources` and run command `docker compose up -d`;
+1. in terminal, move to folder `/src/main/resources` and run command `docker compose up -d`;
 2. run application in IDE or terminal;
 3. send a request like example;
 
 ### Example of request
 
+1) Analyse the model (UML)
 ```
-curl --location --request POST 'http://localhost:8080/kafka/send?filePath=%2Fhome%2Fluan%2FDocuments%2Fprojects%2Feclipse-workspace-papyrus%2FPapyrus%2FPapyrus.uml&version=001'
+curl --location 'http://localhost:8080/kafka/send' \
+--form 'file=@"[path_to_uml_file]/example.uml"'
+```
+
+2) Retrieve the result
+```
+curl --location 'http://localhost:8080/kafka/inconsistencies/[code_from_first_request]'
 ```
 
 ## License
