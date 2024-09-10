@@ -105,6 +105,10 @@ public class SequenceDiagramReader implements Serializable {
 		// Messages
 		for (Message message : interactionImpl.getMessages()) {
 			SequenceMessage messageReader = messageReader(message);
+			
+			if (messageReader.getSender() == null || messageReader.getReceiver() == null) {
+				continue;
+			}
 
 			SequenceLifeline sequenceLifeline = sequenceDiagram.getLifelines().stream()
 					.filter(l -> l.getName().equals(messageReader.getSender().getLifelineName())).findFirst()
