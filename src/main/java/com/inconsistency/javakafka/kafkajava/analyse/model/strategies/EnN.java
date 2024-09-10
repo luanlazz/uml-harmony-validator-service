@@ -27,8 +27,7 @@ public class EnN extends AnalyseModelInconsistency {
 	public void analyse() {
 		for (SequenceMessage sequenceMessage : this.getUMLModel().getMessages()) {
 			if (sequenceMessage.getMessageName().isEmpty()) {
-				String errorMessage = "O objeto " + sequenceMessage.getSender().getLifelineName()
-						+ " possui uma mensagem sem nome.";
+				String errorMessage = "Há uma mensagem sem nome.";
 				InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 						sequenceMessage.getParentId(), errorMessage);
 				this.addError(error);

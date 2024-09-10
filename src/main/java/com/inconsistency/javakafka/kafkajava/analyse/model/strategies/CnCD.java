@@ -32,8 +32,7 @@ public class CnCD extends AnalyseModelInconsistency {
 			}).findFirst().orElse(null);
 
 			if (_class == null) {
-				String errorMessage = "O objeto " + lifeline.getLifelineName()
-						+ " não foi definido no diagrama de classes.";
+				String errorMessage = "Objeto não foi definido no diagrama de classes.";
 				InconsistencyError error = new InconsistencyError(lifeline.getId(), lifeline.getParentId(),
 						errorMessage);
 				this.addError(error);

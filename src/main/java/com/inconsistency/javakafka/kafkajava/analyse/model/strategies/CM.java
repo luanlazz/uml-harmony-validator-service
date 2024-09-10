@@ -32,7 +32,7 @@ public class CM extends AnalyseModelInconsistency {
 
 		for (ClassStructure _class : this.getUMLModel().getClasses()) {
 			if (classesName.add(_class.getName()) == false) {
-				String errorMessage = "A classe " + _class.getName() + " já foi definida no diagrama";
+				String errorMessage = "Classe já foi definida no diagrama de classes.";
 				InconsistencyError error = new InconsistencyError(_class.getId(), _class.getParentId(), errorMessage);
 				this.addError(error);
 			}

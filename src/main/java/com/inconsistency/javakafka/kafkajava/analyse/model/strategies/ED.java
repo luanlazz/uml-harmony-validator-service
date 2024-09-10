@@ -82,8 +82,8 @@ public class ED extends AnalyseModelInconsistency {
 				}
 
 				if (senderOperation != null) {
-					String errorMessage = "A mensagem " + messageName
-							+ " está na direção errada pois, está definida na classe " + senderName + ".";
+					String errorMessage = "Mensagem " + messageName
+							+ " na direção errada pois, está definida na classe " + senderName + ".";
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);
 					this.addError(error);

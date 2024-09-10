@@ -48,7 +48,6 @@ public class EcM extends AnalyseModelInconsistency {
 				}).toList();
 
 				ClassOperation receiverOperation = null;
-				ClassStructure classReceiver = null;
 
 				for (ClassStructure _classReceiver : classesReceiver) {
 					receiverOperation = _classReceiver.getOperations().stream().filter(op -> {
@@ -56,14 +55,13 @@ public class EcM extends AnalyseModelInconsistency {
 					}).findFirst().orElse(null);
 
 					if (receiverOperation != null) {
-						classReceiver = _classReceiver;
 						break;
 					}
 				}
 
 				if (receiverOperation == null) {
-					String errorMessage = "A mensagem " + messageName + " não foi definida na classe "
-							+ (classReceiver != null ? classReceiver.getName() : receiverName) + ".";
+					String errorMessage = "Mensagem " + messageName + " não foi definida no objeto " + receiverName
+							+ ".";
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);
 					this.addError(error);
