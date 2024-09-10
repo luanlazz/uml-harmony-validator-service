@@ -52,7 +52,7 @@ public class InconsistencyConcentration {
 
 	public void setConcentration(double concentration) {
 		this.concentration = concentration;
-		this.setConcentrationStr(String.format("%.2f", concentration));
+		this.setConcentrationStr(String.format("%.1f", concentration * 100));
 		this.calculateConcentration();
 	}
 

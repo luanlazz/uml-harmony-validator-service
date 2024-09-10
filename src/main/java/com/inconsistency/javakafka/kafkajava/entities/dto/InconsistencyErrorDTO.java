@@ -3,7 +3,6 @@ package com.inconsistency.javakafka.kafkajava.entities.dto;
 import java.io.Serializable;
 
 import com.inconsistency.javakafka.kafkajava.entities.Severity;
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 
 public class InconsistencyErrorDTO implements Serializable {
 
@@ -87,7 +86,7 @@ public class InconsistencyErrorDTO implements Serializable {
 
 	public void setConcentration(double concentration) {
 		this.concentration = concentration;
-		this.setConcentrationStr(String.format("%.2f", concentration));
+		this.setConcentrationStr(String.format("%.1f", concentration * 100));
 		calculateConcentration();
 	}
 

@@ -38,7 +38,7 @@ public class DiagramStatistics {
 
 	public void setRiskMisinterpretation(double riskMisinterpretation) {
 		this.riskMisinterpretation = riskMisinterpretation;
-		this.setRiskMisinterpretationStr(String.format("%.2f", riskMisinterpretation));
+		this.setRiskMisinterpretationStr(String.format("%.1f", riskMisinterpretation));
 	}
 
 	public String getRiskMisinterpretationStr() {
