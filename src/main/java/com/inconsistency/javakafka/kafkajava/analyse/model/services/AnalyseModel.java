@@ -37,7 +37,6 @@ import com.inconsistency.javakafka.kafkajava.uml.reader.service.UMLModelReaderSe
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import redis.clients.jedis.Jedis;
 
 @Slf4j
 @Service

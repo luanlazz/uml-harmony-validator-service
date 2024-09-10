@@ -13,7 +13,6 @@ import com.inconsistency.javakafka.kafkajava.entities.DiagramStatistics;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentration;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentrationComparator;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTOComparator;
 import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
