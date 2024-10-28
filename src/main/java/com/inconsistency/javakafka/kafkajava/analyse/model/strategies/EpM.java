@@ -54,7 +54,8 @@ public class EpM extends AnalyseModelInconsistency {
 				}
 
 				if (receiverOperation != null && receiverOperation.getVisibility().equals("private")) {
-					String errorMessage = "Mensagem " + messageName + " privada no objeto " + receiverName + ".";
+					String errorMessage = String.format(messageService.get("inconsistency.message.epm"), messageName,
+							receiverName);
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);
 					this.addError(error);

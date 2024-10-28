@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,6 +21,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
@@ -60,13 +62,18 @@ public class AnalyseModel {
 	private final StreamsBuilderFactoryBean factoryBean;
 
 	@Autowired
+	@Qualifier(value = "UMLModelRedisTemplate")
 	private RedisTemplate<String, UMLModelDTO> redisTemplate;
+	
+	@Autowired
+	@Qualifier(value = "StringRedisTemplate")
+	private RedisTemplate<String, String> redisTemplateString;
 
 	public AnalyseModel(StreamsBuilderFactoryBean factoryBean) {
 		this.factoryBean = factoryBean;
 	}
 
-	public String analyseModelsByFile(MultipartFile file) throws Exception {
+	public String analyseModelsByFile(MultipartFile file, Locale locale) throws Exception {
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
 		file.transferTo(convFile);
@@ -79,6 +86,7 @@ public class AnalyseModel {
 		String clientId = System.currentTimeMillis() + String.valueOf(counter.incrementAndGet());
 
 		this.redisTemplate.opsForValue().set(clientId, umlModel);
+		this.redisTemplateString.opsForValue().set(clientId + "_locale", locale.toString());
 
 		KafkaProducer<String, String> producer = ProducerConfiguration
 				.createKafkaProducerAnalyseModel(bootstrapServers);

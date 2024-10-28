@@ -43,7 +43,7 @@ public class CaSD extends AnalyseModelInconsistency {
 			}).findFirst().orElse(null);
 
 			if (lifeline != null) {
-				String errorMessage = "Objeto definido como classe abstrata no diagrama de classes.";
+				String errorMessage = messageService.get("inconsistency.message.casd");
 				InconsistencyError error = new InconsistencyError(lifeline.getId(), lifeline.getParentId(),
 						errorMessage);
 				this.addError(error);

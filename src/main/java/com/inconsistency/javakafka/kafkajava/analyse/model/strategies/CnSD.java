@@ -32,7 +32,7 @@ public class CnSD extends AnalyseModelInconsistency {
 			}).findFirst().orElse(null);
 
 			if (!classStructure.isAbstract() && lifeline == null) {
-				String errorMessage = "Classe não foi instanciada no diagrama de sequência.";
+				String errorMessage = messageService.get("inconsistency.message.cnsd");
 				InconsistencyError error = new InconsistencyError(classStructure.getId(), classStructure.getParentId(),
 						errorMessage);
 				this.addError(error);

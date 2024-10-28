@@ -60,8 +60,8 @@ public class EcM extends AnalyseModelInconsistency {
 				}
 
 				if (receiverOperation == null) {
-					String errorMessage = "Mensagem " + messageName + " não foi definida no objeto " + receiverName
-							+ ".";
+					String errorMessage = String.format(messageService.get("inconsistency.message.ecm"), messageName,
+							receiverName);
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);
 					this.addError(error);

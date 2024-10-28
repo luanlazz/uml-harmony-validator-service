@@ -12,6 +12,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -23,6 +24,7 @@ import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
+import com.inconsistency.javakafka.kafkajava.i18n.MessageService;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +39,9 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 
 	private static final Logger logger = LoggerFactory.getLogger(Inconsistency.class);
 
+	@Autowired
+	protected MessageService messageService;
+
 	@Value("${spring.kafka.topic.inconsistencies-errors}")
 	private String topicInconsistencies;
 
@@ -48,7 +53,12 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 	private String clientId;
 
 	@Autowired
+	@Qualifier(value = "UMLModelRedisTemplate")
 	private RedisTemplate<String, UMLModelDTO> redisTemplate;
+
+	@Autowired
+	@Qualifier(value = "StringRedisTemplate")
+	private RedisTemplate<String, String> redisTemplateString;
 
 	@Autowired
 	public AnalyseModelInconsistency(Inconsistency inconsistency) {
@@ -144,6 +154,9 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 				throw new EntityNotFoundException("Model not found to Analyse");
 			}
 			this.setUMLModel(umlModelRedis);
+
+			String localeStr = this.redisTemplateString.opsForValue().get(record.value() + "_locale");
+			this.messageService.setLocale(localeStr);
 
 			this.analyse();
 		} catch (Exception e) {

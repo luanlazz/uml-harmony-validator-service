@@ -32,7 +32,7 @@ public class Om extends AnalyseModelInconsistency {
 
 		for (SequenceLifeline lifeline : this.getUMLModel().getLifelines()) {
 			if (classesName.add(lifeline.getLifelineName()) == false) {
-				String errorMessage = "Objeto já foi definido no diagrama.";
+				String errorMessage = messageService.get("inconsistency.message.om");
 				InconsistencyError error = new InconsistencyError(lifeline.getId(), lifeline.getParentId(),
 						errorMessage);
 				this.addError(error);

@@ -33,4 +33,16 @@ public class RedisConfig {
 		return template;
 	}
 
+	@Bean(name = "StringRedisTemplate")
+	public RedisTemplate<String, String> redisTemplateString(@Value("${spring.redis.host}") final String host,
+			@Value("${spring.redis.port}") final int port) {
+		RedisTemplate<String, String> template = new RedisTemplate<>();
+		template.setConnectionFactory(redisConnectionFactory(host, port));
+		template.setKeySerializer(new StringRedisSerializer());
+		template.setHashKeySerializer(new StringRedisSerializer());
+		template.setValueSerializer(new StringRedisSerializer());
+		template.setHashValueSerializer(new StringRedisSerializer());
+
+		return template;
+	}
 }

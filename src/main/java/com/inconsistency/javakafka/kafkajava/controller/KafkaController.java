@@ -1,6 +1,7 @@
 package com.inconsistency.javakafka.kafkajava.controller;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -33,28 +34,17 @@ public class KafkaController {
 	@Autowired
 	private AnalyseModel analyseUMLModelService;
 
-	public KafkaController() {
-	}
-
 	@ResponseBody
 	@PostMapping(value = "/send")
-	public ResponseEntity<Map<String, String>> send(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<Map<String, String>> send(@RequestParam("file") MultipartFile file, Locale locale) {
 		HashMap<String, String> responseBody = new HashMap<>();
 
 		try {
-			String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+			validateFile(file);
+			
+			locale = new Locale("pt");
 
-			if (fileName.contains("..")) {
-				throw new Exception("Filename contains invalid path sequence " + fileName);
-			}
-
-			long fileSizeKb = file.getSize() / 1000;
-			long maxSizeKb = 10 * 1024;
-			if (fileSizeKb > maxSizeKb) {
-				throw new Exception("File size exceeds maximum limit: 10mb");
-			}
-
-			String clientId = this.analyseUMLModelService.analyseModelsByFile(file);
+			String clientId = this.analyseUMLModelService.analyseModelsByFile(file, locale);
 
 			responseBody.put("success", "true");
 			responseBody.put("clientId", clientId);
@@ -71,8 +61,22 @@ public class KafkaController {
 		return new ResponseEntity<Map<String, String>>(responseBody, HttpStatus.BAD_REQUEST);
 	}
 
+	private void validateFile(MultipartFile file) throws Exception {
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+		if (fileName.contains("..")) {
+			throw new Exception("Filename contains invalid path sequence " + fileName);
+		}
+
+		long fileSizeKb = file.getSize() / 1000;
+		long maxSizeKb = 10 * 1024;
+		if (fileSizeKb > maxSizeKb) {
+			throw new Exception("File size exceeds maximum limit: 10mb");
+		}
+	}
+
 	@GetMapping("/inconsistencies/{clientId}")
-	public @ResponseBody Map<String, Object> getDealerSales(@PathVariable String clientId) {
+	public @ResponseBody Map<String, Object> getDealerSales(@PathVariable String clientId, Locale locale) {
 		HashMap<String, Object> responseBody = new HashMap<>();
 
 		try {
