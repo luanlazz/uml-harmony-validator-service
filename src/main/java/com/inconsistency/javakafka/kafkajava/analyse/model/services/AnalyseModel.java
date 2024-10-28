@@ -59,7 +59,8 @@ public class AnalyseModel {
 
 	private final AtomicLong counter = new AtomicLong();
 
-	private final StreamsBuilderFactoryBean factoryBean;
+	@Autowired
+	private StreamsBuilderFactoryBean factoryBean;
 
 	@Autowired
 	@Qualifier(value = "UMLModelRedisTemplate")
@@ -68,10 +69,6 @@ public class AnalyseModel {
 	@Autowired
 	@Qualifier(value = "StringRedisTemplate")
 	private RedisTemplate<String, String> redisTemplateString;
-
-	public AnalyseModel(StreamsBuilderFactoryBean factoryBean) {
-		this.factoryBean = factoryBean;
-	}
 
 	public String analyseModelsByFile(MultipartFile file, Locale locale) throws Exception {
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());

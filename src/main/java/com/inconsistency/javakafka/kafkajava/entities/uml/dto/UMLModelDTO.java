@@ -11,15 +11,11 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceMessage;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Data
 public class UMLModelDTO {
 
 	private String id;
@@ -31,9 +27,6 @@ public class UMLModelDTO {
 	private List<EnumStructure> enumerations = new ArrayList<>();
 	private List<SequenceLifeline> lifelines = new ArrayList<>();
 	private List<SequenceMessage> messages = new ArrayList<>();
-
-	public UMLModelDTO() {
-	}
 
 	public String getId() {
 		return id;
