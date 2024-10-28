@@ -42,8 +42,6 @@ public class KafkaController {
 		try {
 			validateFile(file);
 			
-			locale = new Locale("pt");
-
 			String clientId = this.analyseUMLModelService.analyseModelsByFile(file, locale);
 
 			responseBody.put("success", "true");
