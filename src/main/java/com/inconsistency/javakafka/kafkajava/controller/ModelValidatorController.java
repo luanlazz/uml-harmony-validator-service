@@ -1,6 +1,7 @@
 package com.inconsistency.javakafka.kafkajava.controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -49,10 +50,7 @@ public class ModelValidatorController {
 		try {
 			validateFile(file);
 
-			String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-			File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
-			file.transferTo(convFile);
-
+			File convFile = convertToFile(file);
 			UMLModelDTO umlModel = UMLModelReaderService.diagramReader(convFile);
 			if (umlModel == null) {
 				throw new Exception("Model is invalid");
@@ -73,6 +71,13 @@ public class ModelValidatorController {
 		}
 
 		return new ResponseEntity<Map<String, String>>(responseBody, HttpStatus.BAD_REQUEST);
+	}
+
+	private File convertToFile(MultipartFile file) throws IOException {
+		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
+		file.transferTo(convFile);
+		return convFile;
 	}
 
 	private void validateFile(MultipartFile file) throws Exception {
