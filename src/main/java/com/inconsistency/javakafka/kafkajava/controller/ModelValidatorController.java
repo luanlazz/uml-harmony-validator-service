@@ -68,7 +68,6 @@ public class ModelValidatorController {
 			return new ResponseEntity<Map<String, String>>(responseBody, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("message: " + e.getMessage() + "- \nStackTrace: " + ExceptionUtils.getStackTrace(e));
-
 			responseBody.put("success", "false");
 			responseBody.put("error", "Model invalid");
 		}
@@ -100,8 +99,7 @@ public class ModelValidatorController {
 			responseBody.put("success", "true");
 			responseBody.put("data", response);
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			logger.error(ExceptionUtils.getStackTrace(e));
+			logger.error("message: " + e.getMessage() + "- \nStackTrace: " + ExceptionUtils.getStackTrace(e));
 			responseBody.put("success", "false");
 		}
 
