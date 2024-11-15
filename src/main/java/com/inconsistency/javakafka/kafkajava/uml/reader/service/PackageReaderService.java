@@ -12,8 +12,6 @@ import org.eclipse.uml2.uml.internal.impl.InteractionImpl;
 
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassInstance;
-import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._package.PackageStructure;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceDiagram;
 import com.inconsistency.javakafka.kafkajava.uml.reader.PackageReader;
