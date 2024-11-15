@@ -35,7 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @EnableKafka
 @Component("receiveModifications")
-public abstract class AnalyseModelInconsistency implements IAnalyseModel {
+public abstract class DetectionStrategy implements IDetectionStrategy {
 
 	private static final Logger logger = LoggerFactory.getLogger(Inconsistency.class);
 
@@ -61,7 +61,7 @@ public abstract class AnalyseModelInconsistency implements IAnalyseModel {
 	private RedisTemplate<String, String> redisTemplateString;
 
 	@Autowired
-	public AnalyseModelInconsistency(Inconsistency inconsistency) {
+	public DetectionStrategy(Inconsistency inconsistency) {
 		this.inconsistency = inconsistency;
 	}
 

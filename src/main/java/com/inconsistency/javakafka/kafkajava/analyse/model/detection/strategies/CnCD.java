@@ -1,10 +1,10 @@
-package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
+package com.inconsistency.javakafka.kafkajava.analyse.model.detection.strategies;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModelInconsistency;
+import com.inconsistency.javakafka.kafkajava.analyse.model.DetectionStrategy;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
@@ -12,7 +12,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStr
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
 
 @Component
-public class CnCD extends AnalyseModelInconsistency {
+public class CnCD extends DetectionStrategy {
 
 	public CnCD() {
 		super(new Inconsistency(InconsistencyType.CnCD, "Objeto", "CR-48 e CR-61"));

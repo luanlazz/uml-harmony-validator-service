@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesResponse;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.uml.reader.service.UMLModelReaderService;

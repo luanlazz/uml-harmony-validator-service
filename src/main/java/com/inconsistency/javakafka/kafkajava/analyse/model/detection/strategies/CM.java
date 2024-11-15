@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
+package com.inconsistency.javakafka.kafkajava.analyse.model.detection.strategies;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,14 +7,14 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModelInconsistency;
+import com.inconsistency.javakafka.kafkajava.analyse.model.DetectionStrategy;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStructure;
 
 @Component
-public class CM extends AnalyseModelInconsistency {
+public class CM extends DetectionStrategy {
 
 	public CM() {
 		super(new Inconsistency(InconsistencyType.CM, "Classe", ""));

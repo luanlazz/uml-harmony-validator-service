@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.analyse.model.strategies;
+package com.inconsistency.javakafka.kafkajava.analyse.model.detection.strategies;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModelInconsistency;
+import com.inconsistency.javakafka.kafkajava.analyse.model.DetectionStrategy;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;
@@ -15,7 +15,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStr
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceMessage;
 
 @Component
-public class EpM extends AnalyseModelInconsistency {
+public class EpM extends DetectionStrategy {
 
 	public EpM() {
 		super(new Inconsistency(InconsistencyType.EpM, "Mensagem", "CR-84"));

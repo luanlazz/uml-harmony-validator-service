@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 
 public class ListDeserializer<T> implements Deserializer<List<T>> {

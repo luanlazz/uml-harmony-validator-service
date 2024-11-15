@@ -8,7 +8,7 @@ import org.springframework.data.redis.serializer.SerializationException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.model.services.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 
 import lombok.extern.slf4j.Slf4j;
 
