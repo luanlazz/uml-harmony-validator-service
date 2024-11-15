@@ -30,14 +30,44 @@ public class PackageReaderService implements Serializable {
 		UMLModelDTO umlModel = new UMLModelDTO();
 
 		umlModel.setId(ReaderUtils.getXMLId(_package));
-		String packageName = _package.getName() != null ? _package.getName() : "";
-		umlModel.setName(packageName);
+		umlModel.setName(_package.getName() != null ? _package.getName() : "");
 
 		EList<PackageableElement> packageableElements = _package.getPackagedElements();
 
-		// CLASS Attributes
 		PackageStructure packageStructure = PackageReader.readPackage(packageableElements, _package);
 
+		umlModel.getClassDiagram().addAll(readClassDiagramList(packageStructure));
+		umlModel.getClasses().addAll(ClassDiagramReader.classStructures(packageStructure));
+		umlModel.getInstances().addAll(ClassDiagramReader.classInstances(packageStructure));
+
+		umlModel.getSequenceDiagram().addAll(readSequenceDiagramList(packageableElements));
+		umlModel.getLifelines().addAll(SequenceDiagramReader.packageLifelines(umlModel.getSequenceDiagram()));
+		umlModel.getMessages().addAll(SequenceDiagramReader.packageMessages(umlModel.getSequenceDiagram()));
+
+		return umlModel;
+	}
+
+	private static List<SequenceDiagram> readSequenceDiagramList(EList<PackageableElement> packageableElements) {
+		List<SequenceDiagram> sequenceDiagramList = new ArrayList<>();
+		
+		for (PackageableElement element : packageableElements) {
+			if (element.eClass() == UMLPackage.Literals.INTERACTION && element instanceof InteractionImpl) {
+				InteractionImpl interactionImpl = (InteractionImpl) element;
+
+				SequenceDiagram sequenceDiagram = new SequenceDiagram();
+				sequenceDiagram.setName(interactionImpl.getName());
+				sequenceDiagram.setId(ReaderUtils.getXMLId(element));
+				SequenceDiagramReader.interactionReader(interactionImpl, sequenceDiagram, element);
+
+				sequenceDiagramList.add(sequenceDiagram);
+			}
+		}
+		return sequenceDiagramList;
+	}
+
+	private static List<ClassDiagram> readClassDiagramList(PackageStructure packageStructure) {
+		List<ClassDiagram> classDiagramList = new ArrayList<>();
+		
 		if (packageStructure.getPackages().size() > 0) {
 			for (PackageStructure pkgStructure : packageStructure.getPackages()) {
 				ClassDiagram classDiagram = new ClassDiagram();
@@ -48,10 +78,10 @@ public class PackageReaderService implements Serializable {
 				classDiagram.getClasses().addAll(ClassDiagramReader.classStructures(pkgStructure));
 				classDiagram.getInstances().addAll(ClassDiagramReader.classInstances(pkgStructure));
 
-				umlModel.getClassDiagram().add(classDiagram);
+				classDiagramList.add(classDiagram);
 			}
 		}
-
+		
 		if (packageStructure.getClasses().size() > 0) {
 			ClassDiagram classDiagram = new ClassDiagram();
 			classDiagram.setId(packageStructure.getId());
@@ -61,51 +91,9 @@ public class PackageReaderService implements Serializable {
 			classDiagram.getClasses().addAll(ClassDiagramReader.classStructures(packageStructure));
 			classDiagram.getInstances().addAll(ClassDiagramReader.classInstances(packageStructure));
 
-			umlModel.getClassDiagram().add(classDiagram);
+			classDiagramList.add(classDiagram);
 		}
-
-		umlModel.getClasses().addAll(ClassDiagramReader.classStructures(packageStructure));
-		for (ClassStructure cs : umlModel.getClasses()) {
-			List<ClassStructure> superClasses = new ArrayList<>();
-			for (ClassStructure superClass : cs.getSuperClasses()) {
-				ClassStructure superClassByName = ClassDiagramReader.getClassByName(umlModel.getClasses(),
-						superClass.getName());
-				if (superClassByName != null) {
-					superClasses.add(superClassByName);
-				}
-			}
-			cs.setSuperClasses(superClasses);
-		}
-
-		umlModel.getInstances().addAll(ClassDiagramReader.classInstances(packageStructure));
-		for (ClassInstance classInstance : umlModel.getInstances()) {
-			for (ClassStructure classStructure : classInstance.getClasses()) {
-				ClassDiagramReader.getClassByName(umlModel.getClasses(), classStructure.getName()).getInstances()
-						.add(classInstance);
-			}
-		}
-
-		// SEQUENCE attributes
-
-		for (PackageableElement element : packageableElements) {
-			if (element.eClass() == UMLPackage.Literals.INTERACTION && element instanceof InteractionImpl) {
-				InteractionImpl interactionImpl = (InteractionImpl) element;
-
-				SequenceDiagram sequenceDiagram = new SequenceDiagram();
-				sequenceDiagram.setName(interactionImpl.getName());
-				sequenceDiagram.setId(ReaderUtils.getXMLId(element));
-				SequenceDiagramReader.interactionReader(interactionImpl, sequenceDiagram, element);
-
-				umlModel.getSequenceDiagram().add(sequenceDiagram);
-			}
-		}
-
-		// read lifelines
-		umlModel.getLifelines().addAll(SequenceDiagramReader.packageLifelines(umlModel.getSequenceDiagram()));
-
-		// read messages
-		umlModel.getMessages().addAll(SequenceDiagramReader.packageMessages(umlModel.getSequenceDiagram()));
-
-		return umlModel;
+		
+		return classDiagramList;
 	}
 }
