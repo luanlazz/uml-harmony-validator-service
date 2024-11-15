@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.controller;
+package com.inconsistency.javakafka.kafkajava.controller.dto;
 
 import java.util.ArrayList;
 import java.util.List;

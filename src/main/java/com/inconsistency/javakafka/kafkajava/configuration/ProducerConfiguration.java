@@ -22,7 +22,6 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorModelSerializer;
-import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 
 @EnableKafka
 @Configuration

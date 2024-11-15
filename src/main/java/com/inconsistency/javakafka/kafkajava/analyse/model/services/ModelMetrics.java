@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.inconsistency.javakafka.kafkajava.controller.InconsistenciesResponse;
+import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesResponse;
 import com.inconsistency.javakafka.kafkajava.entities.DiagramStatistics;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentration;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentrationComparator;

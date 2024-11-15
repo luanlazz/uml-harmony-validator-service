@@ -1,6 +1,5 @@
 package com.inconsistency.javakafka.kafkajava.analyse.model.services;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -27,15 +25,12 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
-import com.inconsistency.javakafka.kafkajava.controller.InconsistenciesResponse;
+import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesResponse;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTOComparator;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
-import com.inconsistency.javakafka.kafkajava.uml.reader.service.UMLModelReaderService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +52,6 @@ public class AnalyseModel {
 	@Value("${spring.kafka.bootstrap-servers}")
 	private String bootstrapServers;
 
-	private final AtomicLong counter = new AtomicLong();
-
 	@Autowired
 	private StreamsBuilderFactoryBean factoryBean;
 
@@ -70,18 +63,7 @@ public class AnalyseModel {
 	@Qualifier(value = "StringRedisTemplate")
 	private RedisTemplate<String, String> redisTemplateString;
 
-	public String analyseModelsByFile(MultipartFile file, Locale locale) throws Exception {
-		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
-		file.transferTo(convFile);
-
-		UMLModelDTO umlModel = UMLModelReaderService.diagramReader(convFile);
-		if (umlModel == null) {
-			throw new Exception("Model is invalid");
-		}
-
-		String clientId = System.currentTimeMillis() + String.valueOf(counter.incrementAndGet());
-
+	public void analyseModel(UMLModelDTO umlModel, String clientId, Locale locale) throws Exception {
 		this.redisTemplate.opsForValue().set(clientId, umlModel);
 		this.redisTemplateString.opsForValue().set(clientId + "_locale", locale.toString());
 
@@ -107,8 +89,6 @@ public class AnalyseModel {
 		} finally {
 			producer.close();
 		}
-
-		return clientId;
 	}
 
 	public InconsistenciesResponse getInconsistenciesByClientId(String clientId) {
