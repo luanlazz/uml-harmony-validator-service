@@ -30,7 +30,7 @@ public class EnN extends DetectionStrategy {
 				String errorMessage = messageService.get("inconsistency.message.enn");
 				InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 						sequenceMessage.getParentId(), errorMessage);
-				this.addError(error);
+				this.generateInconsistencyNotification(error);
 			}
 		}
 	}

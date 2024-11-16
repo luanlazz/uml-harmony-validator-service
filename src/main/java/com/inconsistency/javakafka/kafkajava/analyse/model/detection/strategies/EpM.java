@@ -58,7 +58,7 @@ public class EpM extends DetectionStrategy {
 							receiverName);
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);
-					this.addError(error);
+					this.generateInconsistencyNotification(error);
 				}
 			}
 

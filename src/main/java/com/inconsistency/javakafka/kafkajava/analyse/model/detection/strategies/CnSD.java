@@ -35,7 +35,7 @@ public class CnSD extends DetectionStrategy {
 				String errorMessage = messageService.get("inconsistency.message.cnsd");
 				InconsistencyError error = new InconsistencyError(classStructure.getId(), classStructure.getParentId(),
 						errorMessage);
-				this.addError(error);
+				this.generateInconsistencyNotification(error);
 			}
 		}
 	}

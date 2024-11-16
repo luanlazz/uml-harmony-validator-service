@@ -12,16 +12,16 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 
-public class InconsistencyErrorModelSerde implements Serde<InconsistencyErrorDTO> {
+public class InconsistencyErrorModelSerde implements Serde<InconsistencyNotificationDTO> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public Serializer<InconsistencyErrorDTO> serializer() {
-		return new Serializer<InconsistencyErrorDTO>() {
+	public Serializer<InconsistencyNotificationDTO> serializer() {
+		return new Serializer<InconsistencyNotificationDTO>() {
 			@Override
-			public byte[] serialize(String topic, InconsistencyErrorDTO data) {
+			public byte[] serialize(String topic, InconsistencyNotificationDTO data) {
 				try {
 					if (data == null) {
 						logger.warn("[InconsistencyErrorDTO] Null received at serializing");
@@ -46,17 +46,17 @@ public class InconsistencyErrorModelSerde implements Serde<InconsistencyErrorDTO
 	}
 
 	@Override
-	public Deserializer<InconsistencyErrorDTO> deserializer() {
-		return new Deserializer<InconsistencyErrorDTO>() {
+	public Deserializer<InconsistencyNotificationDTO> deserializer() {
+		return new Deserializer<InconsistencyNotificationDTO>() {
 			@Override
-			public InconsistencyErrorDTO deserialize(String topic, byte[] data) {
+			public InconsistencyNotificationDTO deserialize(String topic, byte[] data) {
 				try {
 					if (data == null) {
 						logger.warn("[InconsistencyErrorDTO] Null received at deserializing");
 						return null;
 					}
 
-					return objectMapper.readValue(new String(data, "UTF-8"), InconsistencyErrorDTO.class);
+					return objectMapper.readValue(new String(data, "UTF-8"), InconsistencyNotificationDTO.class);
 				} catch (Exception e) {
 					logger.error("[InconsistencyErrorDTO] Error when deserializing");
 					throw new SerializationException("Error when deserializing byte[] to InconsistencyErrorModel");

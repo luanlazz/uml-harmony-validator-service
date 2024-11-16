@@ -10,13 +10,13 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 
-public class InconsistencyErrorModelSerializer implements Serializer<InconsistencyErrorDTO> {
+public class InconsistencyErrorModelSerializer implements Serializer<InconsistencyNotificationDTO> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public byte[] serialize(String topic, InconsistencyErrorDTO data) {
+	public byte[] serialize(String topic, InconsistencyNotificationDTO data) {
 		try {
 			if (data == null) {
 				logger.warn("[InconsistencyErrorDTO] Null received at serializing");

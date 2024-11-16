@@ -12,7 +12,7 @@ import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesRespo
 import com.inconsistency.javakafka.kafkajava.entities.DiagramStatistics;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentration;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentrationComparator;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.UMLElement;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassDiagram;
@@ -33,7 +33,7 @@ public class ModelMetrics {
 	Map<String, InconsistencyConcentration> concetrationPkgs = new HashMap<String, InconsistencyConcentration>();
 	Map<String, List<InconsistencyConcentration>> concetrationClassSeq = new HashMap<String, List<InconsistencyConcentration>>();
 
-	public InconsistenciesResponse computeElementsModel(List<InconsistencyErrorDTO> clientInconsistencies,
+	public InconsistenciesResponse computeElementsModel(List<InconsistencyNotificationDTO> clientInconsistencies,
 			UMLModelDTO umlModel, InconsistenciesResponse inconsistenciesResponse) {
 		numInconsistencies = clientInconsistencies.size();
 
@@ -47,7 +47,7 @@ public class ModelMetrics {
 
 		readModelElements(umlModel);
 
-		for (InconsistencyErrorDTO inconsistency : clientInconsistencies) {
+		for (InconsistencyNotificationDTO inconsistency : clientInconsistencies) {
 			computeInconsistency(inconsistency.getElId());
 		}
 
@@ -73,9 +73,9 @@ public class ModelMetrics {
 		return inconsistenciesResponse;
 	}
 
-	private void computeConcentrationByInconsistency(List<InconsistencyErrorDTO> clientInconsistencies,
+	private void computeConcentrationByInconsistency(List<InconsistencyNotificationDTO> clientInconsistencies,
 			List<InconsistencyConcentration> combinedList) {
-		for (InconsistencyErrorDTO inconsistency : clientInconsistencies) {
+		for (InconsistencyNotificationDTO inconsistency : clientInconsistencies) {
 			InconsistencyConcentration concentration = combinedList.stream()
 					.filter(e -> e.getId().equals(inconsistency.getElId())).findFirst().orElse(null);
 			if (concentration != null) {
@@ -193,7 +193,7 @@ public class ModelMetrics {
 		}
 	}
 
-	public InconsistenciesResponse computeModelMetrics(List<InconsistencyErrorDTO> clientInconsistencies,
+	public InconsistenciesResponse computeModelMetrics(List<InconsistencyNotificationDTO> clientInconsistencies,
 			InconsistenciesResponse inconsistenciesResponse) {
 		List<DiagramStatistics> diagramStatistics = new ArrayList<>();
 		inconsistenciesResponse.setDiagramStatistics(diagramStatistics);

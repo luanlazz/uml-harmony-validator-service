@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 import com.inconsistency.javakafka.kafkajava.i18n.MessageService;
 
@@ -54,11 +54,11 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 
 	@Autowired
 	@Qualifier(value = "UMLModelRedisTemplate")
-	private RedisTemplate<String, UMLModelDTO> redisTemplate;
+	private RedisTemplate<String, UMLModelDTO> modelRepositoryRedisTemplate;
 
 	@Autowired
 	@Qualifier(value = "StringRedisTemplate")
-	private RedisTemplate<String, String> redisTemplateString;
+	private RedisTemplate<String, String> userLocaleRedisTemplate;
 
 	@Autowired
 	public DetectionStrategy(Inconsistency inconsistency) {
@@ -81,42 +81,30 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 		return umlModel;
 	}
 
-	public String getClientId() {
-		return clientId;
-	}
-
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
 
-	public String getTopicInconsistencies() {
-		return topicInconsistencies;
-	}
-
-	public void addError(InconsistencyError error) {
-		InconsistencyErrorDTO errorModel = new InconsistencyErrorDTO();
+	public void generateInconsistencyNotification(InconsistencyError error) {
+		InconsistencyNotificationDTO inconsistencyNotification = new InconsistencyNotificationDTO();
 		Inconsistency inconsistency = this.getInconsistency();
 
-		errorModel.setClientId(this.getClientId());
-		errorModel.setDescription(error.getMessage());
+		inconsistencyNotification.setClientId(this.clientId);
+		inconsistencyNotification.setDescription(error.getMessage());
+		inconsistencyNotification.setInconsistencyTypeCode(inconsistency.getInconsistencyType().name());
+		inconsistencyNotification.setInconsistencyTypeDesc(inconsistency.getInconsistencyType().getDescription());
+		inconsistencyNotification.setCr(inconsistency.getConsistenciesRules());
+		inconsistencyNotification.setElId(error.getElId());
+		inconsistencyNotification.setParentId(error.getDiagramId());
 
-		errorModel.setInconsistencyTypeCode(inconsistency.getInconsistencyType().name());
-		errorModel.setInconsistencyTypeDesc(inconsistency.getInconsistencyType().getDescription());
-
-		errorModel.setCr(inconsistency.getConsistenciesRules());
-
-		errorModel.setElId(error.getElId());
-
-		errorModel.setParentId(error.getDiagramId());
-
-		sendError(errorModel);
+		sendNotification(inconsistencyNotification);
 	}
 
-	private void sendError(InconsistencyErrorDTO errorModel) {
-		KafkaProducer<String, InconsistencyErrorDTO> producer = ProducerConfiguration
+	private void sendNotification(InconsistencyNotificationDTO inconsistencyNotification) {
+		KafkaProducer<String, InconsistencyNotificationDTO> producer = ProducerConfiguration
 				.createKafkaProducerInconsistencyErrorModel(bootstrapServers);
-		ProducerRecord<String, InconsistencyErrorDTO> record = new ProducerRecord<>(topicInconsistencies, clientId,
-				errorModel);
+		ProducerRecord<String, InconsistencyNotificationDTO> record = new ProducerRecord<>(topicInconsistencies, clientId,
+				inconsistencyNotification);
 		Future<RecordMetadata> future = producer.send(record, new Callback() {
 			@Override
 			public void onCompletion(RecordMetadata metadata, Exception exception) {
@@ -149,13 +137,13 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 
 			this.setClientId(record.key());
 
-			UMLModelDTO umlModelRedis = this.redisTemplate.opsForValue().get(record.value());
+			UMLModelDTO umlModelRedis = this.modelRepositoryRedisTemplate.opsForValue().get(record.value());
 			if (umlModelRedis == null) {
 				throw new EntityNotFoundException("Model not found to Analyse");
 			}
 			this.setUMLModel(umlModelRedis);
 
-			String localeStr = this.redisTemplateString.opsForValue().get(record.value() + "_locale");
+			String localeStr = this.userLocaleRedisTemplate.opsForValue().get(record.value() + "_locale");
 			this.messageService.setLocale(localeStr);
 
 			this.analyse();

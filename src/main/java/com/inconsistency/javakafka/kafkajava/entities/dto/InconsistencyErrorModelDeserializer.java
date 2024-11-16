@@ -13,20 +13,20 @@ import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class InconsistencyErrorModelDeserializer implements Deserializer<InconsistencyErrorDTO> {
+public class InconsistencyErrorModelDeserializer implements Deserializer<InconsistencyNotificationDTO> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
-	public InconsistencyErrorDTO deserialize(String topic, byte[] data) {
+	public InconsistencyNotificationDTO deserialize(String topic, byte[] data) {
 		try {
 			if (data == null) {
 				logger.warn("[InconsistencyErrorDTO] Null received at deserializing");
 				return null;
 			}
 
-			return objectMapper.readValue(new String(data, "UTF-8"), InconsistencyErrorDTO.class);
+			return objectMapper.readValue(new String(data, "UTF-8"), InconsistencyNotificationDTO.class);
 		} catch (Exception e) {
 			logger.error("[InconsistencyErrorDTO] Error when deserializing");
 			throw new SerializationException("Error when deserializing byte[] to InconsistencyErrorModel");

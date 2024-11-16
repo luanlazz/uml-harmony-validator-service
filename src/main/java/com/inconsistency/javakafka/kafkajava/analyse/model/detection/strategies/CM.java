@@ -34,7 +34,7 @@ public class CM extends DetectionStrategy {
 			if (classesName.add(_class.getName()) == false) {
 				String errorMessage = messageService.get("inconsistency.message.cm");
 				InconsistencyError error = new InconsistencyError(_class.getId(), _class.getParentId(), errorMessage);
-				this.addError(error);
+				this.generateInconsistencyNotification(error);
 			}
 		}
 	}

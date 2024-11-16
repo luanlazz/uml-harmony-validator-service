@@ -20,7 +20,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorModelSerializer;
 
 @EnableKafka
@@ -62,14 +62,14 @@ public class ProducerConfiguration {
 		return new KafkaProducer<String, String>(props);
 	}
 
-	public static KafkaProducer<String, InconsistencyErrorDTO> createKafkaProducerInconsistencyErrorModel(
+	public static KafkaProducer<String, InconsistencyNotificationDTO> createKafkaProducerInconsistencyErrorModel(
 			String bootstrapServers) {
 		Properties props = new Properties();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, InconsistencyErrorModelSerializer.class);
 
-		return new KafkaProducer<String, InconsistencyErrorDTO>(props);
+		return new KafkaProducer<String, InconsistencyNotificationDTO>(props);
 	}
 
 	@Bean

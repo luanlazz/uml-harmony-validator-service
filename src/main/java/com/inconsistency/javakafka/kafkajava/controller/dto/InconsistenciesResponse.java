@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.inconsistency.javakafka.kafkajava.entities.DiagramStatistics;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyConcentration;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 
 public class InconsistenciesResponse {
 
-	List<InconsistencyErrorDTO> inconsistencies = new ArrayList<>();
+	List<InconsistencyNotificationDTO> inconsistencies = new ArrayList<>();
 
 	List<InconsistencyConcentration> diagrams = new ArrayList<>();
 	List<InconsistencyConcentration> diagramsElements = new ArrayList<>();
@@ -19,11 +19,11 @@ public class InconsistenciesResponse {
 	public InconsistenciesResponse() {
 	}
 
-	public List<InconsistencyErrorDTO> getInconsistencies() {
+	public List<InconsistencyNotificationDTO> getInconsistencies() {
 		return inconsistencies;
 	}
 
-	public void setInconsistencies(List<InconsistencyErrorDTO> inconsistencies) {
+	public void setInconsistencies(List<InconsistencyNotificationDTO> inconsistencies) {
 		this.inconsistencies = inconsistencies;
 	}
 

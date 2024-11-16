@@ -46,7 +46,7 @@ public class CaSD extends DetectionStrategy {
 				String errorMessage = messageService.get("inconsistency.message.casd");
 				InconsistencyError error = new InconsistencyError(lifeline.getId(), lifeline.getParentId(),
 						errorMessage);
-				this.addError(error);
+				this.generateInconsistencyNotification(error);
 			}
 		}
 	}

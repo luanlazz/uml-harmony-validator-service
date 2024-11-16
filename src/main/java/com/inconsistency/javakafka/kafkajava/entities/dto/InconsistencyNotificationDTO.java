@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.inconsistency.javakafka.kafkajava.entities.Severity;
 
-public class InconsistencyErrorDTO implements Serializable {
+public class InconsistencyNotificationDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

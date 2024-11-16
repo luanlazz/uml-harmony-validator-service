@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import com.inconsistency.javakafka.kafkajava.configuration.ProducerConfiguration;
 import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesResponse;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTOComparator;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
 
@@ -96,11 +96,11 @@ public class AnalyseModel {
 
 		KafkaStreams kafkaStreams = factoryBean.getKafkaStreams();
 
-		ReadOnlyKeyValueStore<String, List<InconsistencyErrorDTO>> inconsistencies = kafkaStreams
+		ReadOnlyKeyValueStore<String, List<InconsistencyNotificationDTO>> inconsistencies = kafkaStreams
 				.store(StoreQueryParameters.fromNameAndType(this.storeInconsistenciesClientId,
 						QueryableStoreTypes.keyValueStore()));
 
-		List<InconsistencyErrorDTO> clientInconsistencies = new ArrayList<InconsistencyErrorDTO>();
+		List<InconsistencyNotificationDTO> clientInconsistencies = new ArrayList<InconsistencyNotificationDTO>();
 		clientInconsistencies = inconsistencies.get(clientId);
 		if (clientInconsistencies == null || clientInconsistencies.size() == 0) {
 			return inconsistenciesResponse;
@@ -113,7 +113,7 @@ public class AnalyseModel {
 		metrics.computeElementsModel(clientInconsistencies, umlModel, inconsistenciesResponse);
 		metrics.computeModelMetrics(clientInconsistencies, inconsistenciesResponse);
 		
-		Comparator<InconsistencyErrorDTO> comparatorReverseOrder = Collections
+		Comparator<InconsistencyNotificationDTO> comparatorReverseOrder = Collections
 				.reverseOrder(new InconsistencyErrorDTOComparator());
 		Collections.sort(clientInconsistencies, comparatorReverseOrder);
 		inconsistenciesResponse.getInconsistencies().addAll(clientInconsistencies);

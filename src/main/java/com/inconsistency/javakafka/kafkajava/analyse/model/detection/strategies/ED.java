@@ -86,7 +86,7 @@ public class ED extends DetectionStrategy {
 							senderName);
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);
-					this.addError(error);
+					this.generateInconsistencyNotification(error);
 				}
 			}
 		}

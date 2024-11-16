@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
-import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyErrorDTO;
+import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 
 public class ListDeserializer<T> implements Deserializer<List<T>> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
@@ -21,7 +21,7 @@ public class ListDeserializer<T> implements Deserializer<List<T>> {
 	public List<T> deserialize(String topic, byte[] data) {
 		try {
 			return objectMapper.readValue(data, objectMapper.getTypeFactory().constructCollectionType(ArrayList.class,
-					InconsistencyErrorDTO.class));
+					InconsistencyNotificationDTO.class));
 		} catch (Exception e) {
 			logger.error("[List] Error when deserializing");
 			throw new RuntimeException(e);
