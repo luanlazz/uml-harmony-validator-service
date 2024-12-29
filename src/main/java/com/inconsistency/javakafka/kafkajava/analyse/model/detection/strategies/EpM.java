@@ -18,7 +18,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 public class EpM extends DetectionStrategy {
 
 	public EpM() {
-		super(new Inconsistency(InconsistencyType.EpM, "Mensagem", "CR-84"));
+		super(new Inconsistency(InconsistencyType.EpM, "CD, SD", "R116"));
 	}
 
 	@Override

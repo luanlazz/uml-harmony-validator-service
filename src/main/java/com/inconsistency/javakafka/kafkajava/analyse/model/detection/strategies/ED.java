@@ -19,7 +19,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 public class ED extends DetectionStrategy {
 
 	public ED() {
-		super(new Inconsistency(InconsistencyType.ED, "Mensagem", "CR-63"));
+		super(new Inconsistency(InconsistencyType.ED, "SD,CD", "R110"));
 	}
 
 	@Override

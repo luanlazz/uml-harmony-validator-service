@@ -7,8 +7,8 @@ public enum InconsistencyType {
 	CnCD("Objeto sem Classe no CD"),
 	ED("Mensagem na direção Errada"),
 	EnN("Mensagem sem Nome"),
-	EcM("Mensagem sem Método"),
-	CaSD("Classe abstrata instanciada no SD"),
+	EnM("Mensagem sem Método"),
+	ACSD("Classe abstrata instanciada no SD"),
 	EpM("Mensagem para função privada em CD");
 		
     private String description; 

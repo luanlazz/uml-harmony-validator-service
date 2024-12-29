@@ -17,7 +17,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStr
 public class CM extends DetectionStrategy {
 
 	public CM() {
-		super(new Inconsistency(InconsistencyType.CM, "Classe", ""));
+		super(new Inconsistency(InconsistencyType.CM, "CD", "UML"));
 	}
 
 	@Override

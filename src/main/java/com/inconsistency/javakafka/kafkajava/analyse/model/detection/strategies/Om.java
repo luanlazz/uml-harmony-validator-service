@@ -17,7 +17,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 public class Om extends DetectionStrategy {
 
 	public Om() {
-		super(new Inconsistency(InconsistencyType.Om, "Objeto", ""));
+		super(new Inconsistency(InconsistencyType.Om, "SD", "UML"));
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 public class CnSD extends DetectionStrategy {
 
 	public CnSD() {
-		super(new Inconsistency(InconsistencyType.CnSD, "Classe", "CR-65 e CR-83"));
+		super(new Inconsistency(InconsistencyType.CnSD, "CD,SD", "R115"));
 	}
 
 	@Override

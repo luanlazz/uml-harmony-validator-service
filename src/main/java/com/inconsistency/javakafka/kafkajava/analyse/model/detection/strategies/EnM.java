@@ -16,10 +16,10 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceMessage;
 
 @Component
-public class EcM extends DetectionStrategy {
+public class EnM extends DetectionStrategy {
 
-	public EcM() {
-		super(new Inconsistency(InconsistencyType.EcM, "Mensagem", "CR-78"));
+	public EnM() {
+		super(new Inconsistency(InconsistencyType.EnM, "SD", "R110"));
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class EcM extends DetectionStrategy {
 				}
 
 				if (receiverOperation == null) {
-					String errorMessage = String.format(messageService.get("inconsistency.message.ecm"), messageName,
+					String errorMessage = String.format(messageService.get("inconsistency.message.enm"), messageName,
 							receiverName);
 					InconsistencyError error = new InconsistencyError(sequenceMessage.getId(),
 							sequenceMessage.getParentId(), errorMessage);

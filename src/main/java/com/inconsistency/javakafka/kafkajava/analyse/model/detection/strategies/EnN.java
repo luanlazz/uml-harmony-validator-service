@@ -14,7 +14,7 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.Seque
 public class EnN extends DetectionStrategy {
 
 	public EnN() {
-		super(new Inconsistency(InconsistencyType.EnN, "Objeto", "CR-47"));
+		super(new Inconsistency(InconsistencyType.EnN, "SD", "UML"));
 	}
 
 	@Override

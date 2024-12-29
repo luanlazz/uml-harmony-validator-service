@@ -15,10 +15,10 @@ import com.inconsistency.javakafka.kafkajava.entities.uml.models._class.ClassStr
 import com.inconsistency.javakafka.kafkajava.entities.uml.models._sequence.SequenceLifeline;
 
 @Component
-public class CaSD extends DetectionStrategy {
+public class ACSD extends DetectionStrategy {
 
-	public CaSD() {
-		super(new Inconsistency(InconsistencyType.CaSD, "Objeto", "CR-76"));
+	public ACSD() {
+		super(new Inconsistency(InconsistencyType.ACSD, "CD, SD", "R108"));
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class CaSD extends DetectionStrategy {
 			}).findFirst().orElse(null);
 
 			if (lifeline != null) {
-				String errorMessage = messageService.get("inconsistency.message.casd");
+				String errorMessage = messageService.get("inconsistency.message.acsd");
 				InconsistencyError error = new InconsistencyError(lifeline.getId(), lifeline.getParentId(),
 						errorMessage);
 				this.generateInconsistencyNotification(error);
