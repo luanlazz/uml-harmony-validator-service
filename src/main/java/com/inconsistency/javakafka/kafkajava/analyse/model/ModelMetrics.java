@@ -42,106 +42,55 @@ public class ModelMetrics {
 		concetrationPkgs.clear();
 		concetrationClassSeq.clear();
 
-		readModelElements(umlModel);
+		populateModelElements(umlModel);
 
 		for (InconsistencyNotificationDTO inconsistency : clientInconsistencies) {
 			countInconsistencyToParent(inconsistency.getElId());
 		}
 
-		int modelTotalInconsistencies = clientInconsistencies.size();
-		computePkgConcentration(modelTotalInconsistencies);		
-		computeClassDiagramsConcentration(clientInconsistencies, umlModel);
+		List<InconsistencyConcentration> concentrationPkgsList = computePkgConcentration(clientInconsistencies.size());		
+		List<InconsistencyConcentration> concetrationClassSeqList = computeClassDiagramsConcentration(umlModel);
 		computeDiagramsSequenceConcentration(clientInconsistencies, umlModel);
 
-		List<InconsistencyConcentration> concentrationPkgsList = concetrationPkgs.values().stream()
-				.sorted(comparatorPkgsReverseOrder).toList();
 		inconsistenciesResponse.getDiagrams().addAll(concentrationPkgsList);
-
-		List<InconsistencyConcentration> concetrationClassSeqList = concetrationClassSeq.values().stream().flatMap(List::stream)
-				.sorted(comparatorPkgsReverseOrder).collect(Collectors.toList());
 		inconsistenciesResponse.getDiagramsElements().addAll(concetrationClassSeqList);
 
 		return inconsistenciesResponse;
 	}
 
-	private void computeDiagramsSequenceConcentration(List<InconsistencyNotificationDTO> clientInconsistencies, UMLModelDTO umlModel) {
-		for (SequenceDiagram seqDiagram : umlModel.getSequenceDiagram()) {
-			int sequenceDiagramTotalInconsistencies = inconsistenciesCounterByElementId.getOrDefault(seqDiagram.getId(), 0);
-			if (sequenceDiagramTotalInconsistencies <= 0) continue;
+	public InconsistenciesResponse computeModelMetrics(List<InconsistencyNotificationDTO> clientInconsistencies,
+			InconsistenciesResponse inconsistenciesResponse) {
+		List<DiagramStatistics> diagramStatistics = new ArrayList<>();
+		inconsistenciesResponse.setDiagramStatistics(diagramStatistics);
 
-			List<InconsistencyConcentration> concentrations = new ArrayList<>();
-			Map<String, InconsistencyConcentration> concetrationByElId = new HashMap<String, InconsistencyConcentration>();
-			concetrationClassSeq.put(seqDiagram.getId(), concentrations);
+		for (UMLElement pkg : packages.values()) {
+			int totalInconsistenciesPkg = pkg.getInconsistenciesCount();
 
-			for (UMLElement lifeline : seqDiagram.getLifelines()) {
-				if (lifeline.getInconsistenciesCount() <= 0) continue;
+			List<UMLElement> pkgElements = elements.values().stream()
+					.filter(e -> e.getParentId() != null && e.getParentId().equals(pkg.getId()))
+					.sorted((el1, el2) -> Integer.compare(el2.getInconsistenciesCount(), el1.getInconsistenciesCount()))
+					.collect(Collectors.toList());
 
-				inconsistenciesCounterByElementId.put(lifeline.getId(), lifeline.getInconsistenciesCount());
+			int qtdElementsPkg = pkgElements.size();
+			if (qtdElementsPkg <= 0) continue;
 
-				double lifeLineConcentration = ((double) lifeline.getInconsistenciesCount() / sequenceDiagramTotalInconsistencies);
-				concentrations.add(new InconsistencyConcentration(lifeline.getId(), lifeline.getParentId(),
-						lifeline.getName(), lifeline.getInconsistenciesCount(), lifeLineConcentration));
+			double riskMisinterpretation = calculateRiskMisinterpretation(totalInconsistenciesPkg, qtdElementsPkg, pkgElements);
+			
+			long qtdInconsistentElements = pkgElements.stream().filter(e -> e.getInconsistenciesCount() > 0).count();
+			double spreadRate = ((double) qtdInconsistentElements / (double) qtdElementsPkg) * 100;
+			
+			double concentrationInc = ((double) totalInconsistenciesPkg / (double) clientInconsistencies.size()) * 100;
 
-				List<SequenceMessage> lifelineMessages = seqDiagram.getMessages().stream()
-						.filter(m -> m.getParentId().equals(lifeline.getId()) && m.getInconsistenciesCount() > 0)
-						.toList();
+			DiagramStatistics statistics = new DiagramStatistics(pkg.getId(), riskMisinterpretation, spreadRate,
+					concentrationInc);
 
-				for (UMLElement msg : lifelineMessages) {
-					int lifelineTotalInconsistencies = lifeline.getInconsistenciesCount();
-					if (msg.getInconsistenciesCount() <= 0) continue;
-
-					inconsistenciesCounterByElementId.put(msg.getId(), msg.getInconsistenciesCount());
-
-					double msgConcentration = ((double) msg.getInconsistenciesCount() / lifelineTotalInconsistencies);
-					InconsistencyConcentration concentration = new InconsistencyConcentration(msg.getId(), msg.getParentId(), msg.getName(),
-							msg.getInconsistenciesCount(), msgConcentration);
-					concentrations.add(concentration);
-					concetrationByElId.put(msg.getId(), concentration);
-				}
-				
-				List<InconsistencyNotificationDTO> lifelineInconsistencies = clientInconsistencies.stream()
-						.filter(e -> e.getParentId().equals(lifeline.getId())).collect(Collectors.toList());
-				for (InconsistencyNotificationDTO inconsistency : lifelineInconsistencies) {
-					double inconsistencyConcentration = concetrationByElId.get(inconsistency.getElId()).getConcentration();
-					inconsistency.setConcentration(inconsistencyConcentration);
-				}
-			}
+			diagramStatistics.add(statistics);
 		}
+
+		return inconsistenciesResponse;
 	}
 	
-	private void computeClassDiagramsConcentration(List<InconsistencyNotificationDTO> clientInconsistencies, UMLModelDTO umlModel) {
-		for (ClassDiagram classDiagram : umlModel.getClassDiagram()) {
-			int classDiagramTotalInconsistencies = inconsistenciesCounterByElementId.getOrDefault(classDiagram.getId(), 0);
-			if (classDiagramTotalInconsistencies <= 0) continue;			
-
-			List<InconsistencyConcentration> concentrations = new ArrayList<>();
-			concetrationClassSeq.put(classDiagram.getId(), concentrations);
-
-			for (UMLElement _class : classDiagram.getClasses()) {
-				if (_class.getInconsistenciesCount() <= 0) continue;
-
-				inconsistenciesCounterByElementId.put(_class.getId(), _class.getInconsistenciesCount());
-
-				double concentration = ((double) _class.getInconsistenciesCount() / classDiagramTotalInconsistencies);
-				concentrations.add(new InconsistencyConcentration(_class.getId(), _class.getParentId(),
-						_class.getName(), _class.getInconsistenciesCount(), concentration));
-			}
-		}
-	}
-
-	private void computePkgConcentration(int totalInconsistencies) {
-		for (UMLElement pkg : packages.values()) {
-			if (pkg.getInconsistenciesCount() <= 0) continue;
-			
-			inconsistenciesCounterByElementId.put(pkg.getId(), pkg.getInconsistenciesCount());
-						
-			double concentration = ((double) pkg.getInconsistenciesCount() / totalInconsistencies);
-			concetrationPkgs.put(pkg.getId(), new InconsistencyConcentration(pkg.getId(), pkg.getParentId(),
-					pkg.getName(), pkg.getInconsistenciesCount(), concentration));
-		}
-	}
-
-	private void readModelElements(UMLModelDTO umlModel) {
+	private void populateModelElements(UMLModelDTO umlModel) {
 		for (ClassDiagram classDiagram : umlModel.getClassDiagram()) {
 			packages.put(classDiagram.getId(), classDiagram);
 			elements.put(classDiagram.getId(), classDiagram);
@@ -171,46 +120,7 @@ public class ModelMetrics {
 			}
 		}
 	}
-
-	public InconsistenciesResponse computeModelMetrics(List<InconsistencyNotificationDTO> clientInconsistencies,
-			InconsistenciesResponse inconsistenciesResponse) {
-		List<DiagramStatistics> diagramStatistics = new ArrayList<>();
-		inconsistenciesResponse.setDiagramStatistics(diagramStatistics);
-
-		for (UMLElement pkg : packages.values()) {
-			int totalInconsistenciesPkg = pkg.getInconsistenciesCount();
-
-			List<UMLElement> pkgElements = elements.values().stream()
-					.filter(e -> e.getParentId() != null && e.getParentId().equals(pkg.getId()))
-					.sorted((el1, el2) -> Integer.compare(el2.getInconsistenciesCount(), el1.getInconsistenciesCount()))
-					.collect(Collectors.toList());
-
-			int qtdElementsPkg = pkgElements.size();
-			if (qtdElementsPkg <= 0) continue;
-
-			double denominator = totalInconsistenciesPkg * ((double) qtdElementsPkg - 1);
-
-			double numerator = 0;
-			for (int j = 0; j < qtdElementsPkg; j++) {
-				numerator += pkgElements.get(j).getInconsistenciesCount() * j;
-			}
-
-			double riskMisinterpretation = ((double) 2 * (numerator / denominator)) * 100;
-			
-			long qtdInconsistentElements = pkgElements.stream().filter(e -> e.getInconsistenciesCount() > 0).count();
-			double spreadRate = ((double) qtdInconsistentElements / (double) qtdElementsPkg) * 100;
-			
-			double concentrationInc = ((double) totalInconsistenciesPkg / (double) clientInconsistencies.size()) * 100;
-
-			DiagramStatistics statistics = new DiagramStatistics(pkg.getId(), riskMisinterpretation, spreadRate,
-					concentrationInc);
-
-			diagramStatistics.add(statistics);
-		}
-
-		return inconsistenciesResponse;
-	}
-
+	
 	private void countInconsistencyToParent(String id) {
 		if (id == null) {
 			return;
@@ -221,5 +131,99 @@ public class ModelMetrics {
 			el.addCount();
 			countInconsistencyToParent(el.getParentId());
 		}
+	}
+	
+	private List<InconsistencyConcentration> computePkgConcentration(int totalInconsistencies) {
+		for (UMLElement pkg : packages.values()) {
+			if (pkg.getInconsistenciesCount() <= 0) continue;
+			
+			inconsistenciesCounterByElementId.put(pkg.getId(), pkg.getInconsistenciesCount());
+						
+			double concentration = ((double) pkg.getInconsistenciesCount() / totalInconsistencies);
+			concetrationPkgs.put(pkg.getId(), new InconsistencyConcentration(pkg.getId(), pkg.getParentId(),
+					pkg.getName(), pkg.getInconsistenciesCount(), concentration));
+		}
+		
+		return concetrationPkgs.values().stream().sorted(comparatorPkgsReverseOrder).toList();
+	}
+	
+	private List<InconsistencyConcentration> computeClassDiagramsConcentration(UMLModelDTO umlModel) {
+		for (ClassDiagram classDiagram : umlModel.getClassDiagram()) {
+			int classDiagramTotalInconsistencies = inconsistenciesCounterByElementId.getOrDefault(classDiagram.getId(), 0);
+			if (classDiagramTotalInconsistencies <= 0) continue;			
+
+			List<InconsistencyConcentration> classConcentrations = new ArrayList<>();
+			concetrationClassSeq.put(classDiagram.getId(), classConcentrations);
+
+			for (UMLElement _class : classDiagram.getClasses()) {
+				if (_class.getInconsistenciesCount() <= 0) continue;
+
+				inconsistenciesCounterByElementId.put(_class.getId(), _class.getInconsistenciesCount());
+
+				double concentration = ((double) _class.getInconsistenciesCount() / classDiagramTotalInconsistencies);
+				classConcentrations.add(new InconsistencyConcentration(_class.getId(), _class.getParentId(),
+						_class.getName(), _class.getInconsistenciesCount(), concentration));
+			}
+		}
+		
+		return concetrationClassSeq.values().stream().flatMap(List::stream)
+				.sorted(comparatorPkgsReverseOrder).collect(Collectors.toList());
+	}
+	
+	private void computeDiagramsSequenceConcentration(List<InconsistencyNotificationDTO> clientInconsistencies, UMLModelDTO umlModel) {
+		for (SequenceDiagram seqDiagram : umlModel.getSequenceDiagram()) {
+			int sequenceDiagramTotalInconsistencies = inconsistenciesCounterByElementId.getOrDefault(seqDiagram.getId(), 0);
+			if (sequenceDiagramTotalInconsistencies <= 0) continue;
+
+			List<InconsistencyConcentration> seqConcentrations = new ArrayList<>();
+			Map<String, InconsistencyConcentration> concetrationByElId = new HashMap<String, InconsistencyConcentration>();
+			concetrationClassSeq.put(seqDiagram.getId(), seqConcentrations);
+
+			for (UMLElement lifeline : seqDiagram.getLifelines()) {
+				if (lifeline.getInconsistenciesCount() <= 0) continue;
+
+				inconsistenciesCounterByElementId.put(lifeline.getId(), lifeline.getInconsistenciesCount());
+
+				double lifeLineConcentration = ((double) lifeline.getInconsistenciesCount() / sequenceDiagramTotalInconsistencies);
+				seqConcentrations.add(new InconsistencyConcentration(lifeline.getId(), lifeline.getParentId(),
+						lifeline.getName(), lifeline.getInconsistenciesCount(), lifeLineConcentration));
+
+				List<SequenceMessage> lifelineMessages = seqDiagram.getMessages().stream()
+						.filter(m -> m.getParentId().equals(lifeline.getId()) && m.getInconsistenciesCount() > 0)
+						.toList();
+
+				for (UMLElement msg : lifelineMessages) {
+					if (msg.getInconsistenciesCount() <= 0) continue;
+
+					inconsistenciesCounterByElementId.put(msg.getId(), msg.getInconsistenciesCount());
+
+					int lifelineTotalInconsistencies = lifeline.getInconsistenciesCount();
+					double msgConcentration = ((double) msg.getInconsistenciesCount() / lifelineTotalInconsistencies);
+					InconsistencyConcentration concentration = new InconsistencyConcentration(msg.getId(), msg.getParentId(), msg.getName(),
+							msg.getInconsistenciesCount(), msgConcentration);
+					
+					seqConcentrations.add(concentration);
+					concetrationByElId.put(msg.getId(), concentration);
+				}
+				
+				List<InconsistencyNotificationDTO> lifelineInconsistencies = clientInconsistencies.stream()
+						.filter(e -> e.getParentId().equals(lifeline.getId())).collect(Collectors.toList());
+				for (InconsistencyNotificationDTO inconsistency : lifelineInconsistencies) {
+					double inconsistencyConcentration = concetrationByElId.get(inconsistency.getElId()).getConcentration();
+					inconsistency.setConcentration(inconsistencyConcentration);
+				}
+			}
+		}
+	}
+	
+	private double calculateRiskMisinterpretation(int totalInconsistenciesPkg, int qtdElementsPkg, List<UMLElement> pkgElements) {
+		double denominator = totalInconsistenciesPkg * ((double) qtdElementsPkg - 1);
+
+		double numerator = 0;
+		for (int j = 0; j < qtdElementsPkg; j++) {
+			numerator += pkgElements.get(j).getInconsistenciesCount() * j;
+		}
+
+		return ((double) 2 * (numerator / denominator)) * 100;
 	}
 }
