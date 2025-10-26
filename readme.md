@@ -214,6 +214,4 @@ curl --location 'http://localhost:8080/kafka/inconsistencies/{client_id}'
 
 ## 📄 License
 
-This repository is licensed under the **Creative Commons Attribution–NonCommercial 4.0 International License**.
-You may **not** use this material for commercial purposes.
-See the [LICENSE](LICENSE) file for full details.
+This project is licensed under the [MIT License](LICENSE).
