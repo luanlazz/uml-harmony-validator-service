@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.model.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModel;
 
 public class InconsistencyErrorModelSerde implements Serde<InconsistencyNotificationDTO> {
 	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);

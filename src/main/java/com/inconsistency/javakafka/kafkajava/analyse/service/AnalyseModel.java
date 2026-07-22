@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.analyse.model;
+package com.inconsistency.javakafka.kafkajava.analyse.service;
 
 import java.util.ArrayList;
 import java.util.Collections;

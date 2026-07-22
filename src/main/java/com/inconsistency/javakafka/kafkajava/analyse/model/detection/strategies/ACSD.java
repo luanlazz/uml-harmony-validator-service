@@ -7,7 +7,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
-import com.inconsistency.javakafka.kafkajava.analyse.model.DetectionStrategy;
+import com.inconsistency.javakafka.kafkajava.analyse.service.DetectionStrategy;
 import com.inconsistency.javakafka.kafkajava.entities.Inconsistency;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyError;
 import com.inconsistency.javakafka.kafkajava.entities.InconsistencyType;

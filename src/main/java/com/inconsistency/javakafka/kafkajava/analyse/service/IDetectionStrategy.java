@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.analyse.model;
+package com.inconsistency.javakafka.kafkajava.analyse.service;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 

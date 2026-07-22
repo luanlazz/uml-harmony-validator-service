@@ -1,4 +1,4 @@
-package com.inconsistency.javakafka.kafkajava.analyse.model;
+package com.inconsistency.javakafka.kafkajava.analyse.service;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
