@@ -93,21 +93,4 @@ public class ModelValidatorController {
 			throw new Exception("File size exceeds maximum limit: 10mb");
 		}
 	}
-
-	@GetMapping("/inconsistencies/{clientId}")
-	public @ResponseBody Map<String, Object> getInconsistenciesByClientId(@PathVariable String clientId, Locale locale) {
-		HashMap<String, Object> responseBody = new HashMap<>();
-
-		try {
-			InconsistenciesResponse response = this.analyseUMLModelService.getInconsistenciesByClientId(clientId);
-
-			responseBody.put("success", "true");
-			responseBody.put("data", response);
-		} catch (Exception e) {
-			logger.error("message: " + e.getMessage() + "- \nStackTrace: " + ExceptionUtils.getStackTrace(e));
-			responseBody.put("success", "false");
-		}
-
-		return responseBody;
-	}
 }
