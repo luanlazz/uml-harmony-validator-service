@@ -23,7 +23,7 @@ public class StrategyCompletionService {
 
     private int TOTAL_STRATEGIES;
 	    
-    private final Map<String, AtomicInteger> completionCounterByClientId = new ConcurrentHashMap<>();
+    private final Map<String, AtomicInteger> completionCounterMapByClientId = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
     @Autowired
@@ -38,13 +38,13 @@ public class StrategyCompletionService {
     }
     
     public void registerClient(String clientId) {
-        completionCounterByClientId.put(clientId, new AtomicInteger(0));
+        completionCounterMapByClientId.put(clientId, new AtomicInteger(0));
 
         scheduler.schedule(() -> forceNotify(clientId), 10, TimeUnit.SECONDS);
     }
 
     public void markCompleted(String clientId) {
-        AtomicInteger counter = completionCounterByClientId.get(clientId);
+        AtomicInteger counter = completionCounterMapByClientId.get(clientId);
         if (counter == null) return;
 
         int completed = counter.incrementAndGet();
@@ -64,12 +64,12 @@ public class StrategyCompletionService {
             logger.error("[SSE] Failed to notify clientId: {}", clientId, e);
             sseNotificationService.notifyError(clientId, e.getMessage());
         } finally {
-            completionCounterByClientId.remove(clientId);
+            completionCounterMapByClientId.remove(clientId);
         }
     }
     
     private void forceNotify(String clientId) {
-        if (completionCounterByClientId.containsKey(clientId)) {
+        if (completionCounterMapByClientId.containsKey(clientId)) {
             logger.warn("[SSE] Timeout reached, forcing notification for clientId: {}", clientId);
             notifyAndCleanup(clientId);
         }
