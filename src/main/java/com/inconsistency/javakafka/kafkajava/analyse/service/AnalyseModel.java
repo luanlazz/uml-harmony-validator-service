@@ -38,6 +38,7 @@ public class AnalyseModel {
 	private String bootstrapServers;
 
 	@Autowired
+	private StrategyCompletionService strategyCompletionService;
 
 	@Autowired
 	@Qualifier(value = "UMLModelRedisTemplate")
@@ -53,6 +54,8 @@ public class AnalyseModel {
 
 		KafkaProducer<String, String> producer = ProducerConfiguration
 				.createKafkaProducerAnalyseModel(bootstrapServers);
+	    strategyCompletionService.registerClient(clientId);
+
 		ProducerRecord<String, String> record = new ProducerRecord<>(topicModelToAnalyze, clientId, clientId);
 		Future<RecordMetadata> future = producer.send(record, new Callback() {
 			@Override
