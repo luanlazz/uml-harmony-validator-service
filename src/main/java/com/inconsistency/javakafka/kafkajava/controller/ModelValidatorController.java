@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/kafka")
+@RequestMapping(value = "/validator")
 public class ModelValidatorController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ModelValidatorController.class);
@@ -43,7 +43,7 @@ public class ModelValidatorController {
 	private AnalyseModel analyseUMLModelService;
 
 	@ResponseBody
-	@PostMapping(value = "/send")
+	@PostMapping()
 	public ResponseEntity<Map<String, String>> validate(@RequestParam("file") MultipartFile file, Locale locale) {
 		HashMap<String, String> responseBody = new HashMap<>();
 
@@ -52,9 +52,7 @@ public class ModelValidatorController {
 
 			File convFile = convertToFile(file);
 			UMLModelDTO umlModel = UMLModelReaderService.diagramReader(convFile);
-			if (umlModel == null) {
-				throw new Exception("Model is invalid");
-			}
+			if (umlModel == null) throw new Exception("Model is invalid");
 
 			String clientId = System.currentTimeMillis() + String.valueOf(counter.incrementAndGet());
 
@@ -72,7 +70,6 @@ public class ModelValidatorController {
 
 		return new ResponseEntity<Map<String, String>>(responseBody, HttpStatus.BAD_REQUEST);
 	}
-
 	private File convertToFile(MultipartFile file) throws IOException {
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		File convFile = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
