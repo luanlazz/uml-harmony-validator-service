@@ -38,6 +38,9 @@ public class AnalyseModel {
 	private String bootstrapServers;
 
 	@Autowired
+	private SseNotificationService sseNotificationService;
+	
+	@Autowired
 	private StrategyCompletionService strategyCompletionService;
 
 	@Autowired
@@ -52,6 +55,7 @@ public class AnalyseModel {
 		this.redisTemplate.opsForValue().set(clientId, umlModel);
 		this.redisTemplateString.opsForValue().set(clientId + "_locale", locale.toString());
 
+	    sseNotificationService.registerClient(clientId);
 	    strategyCompletionService.registerClient(clientId);
 
 		KafkaProducer<String, String> producer = ProducerConfiguration.createKafkaProducerAnalyseModel(bootstrapServers);
@@ -63,6 +67,7 @@ public class AnalyseModel {
 			public void onCompletion(RecordMetadata metadata, Exception exception) {
 				if (exception != null) {
 					logger.warn("Unable to deliver message. {}", exception.getMessage());
+					sseNotificationService.notifyError(clientId, exception.getMessage());
 					return;
 				}
 				
