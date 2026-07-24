@@ -52,20 +52,21 @@ public class AnalyseModel {
 		this.redisTemplate.opsForValue().set(clientId, umlModel);
 		this.redisTemplateString.opsForValue().set(clientId + "_locale", locale.toString());
 
-		KafkaProducer<String, String> producer = ProducerConfiguration
-				.createKafkaProducerAnalyseModel(bootstrapServers);
 	    strategyCompletionService.registerClient(clientId);
 
+		KafkaProducer<String, String> producer = ProducerConfiguration.createKafkaProducerAnalyseModel(bootstrapServers);
+		
 		ProducerRecord<String, String> record = new ProducerRecord<>(topicModelToAnalyze, clientId, clientId);
+		
 		Future<RecordMetadata> future = producer.send(record, new Callback() {
 			@Override
 			public void onCompletion(RecordMetadata metadata, Exception exception) {
 				if (exception != null) {
 					logger.warn("Unable to deliver message. {}", exception.getMessage());
-				} else {
-					logger.info("[Analyse Model] Message delivered with offset {}", metadata.topic(),
-							metadata.offset());
+					return;
 				}
+				
+				logger.info("[Analyse Model] Message delivered with offset {}", metadata.topic(), metadata.offset());
 			}
 		});
 
