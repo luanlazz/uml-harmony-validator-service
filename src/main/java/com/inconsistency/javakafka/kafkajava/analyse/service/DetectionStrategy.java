@@ -61,6 +61,9 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 	private RedisTemplate<String, String> userLocaleRedisTemplate;
 
 	@Autowired
+	private StrategyCompletionService strategyCompletionService;
+	
+	@Autowired
 	public DetectionStrategy(Inconsistency inconsistency) {
 		this.inconsistency = inconsistency;
 	}
@@ -145,8 +148,11 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 			this.messageService.setLocale(localeStr);
 
 			this.analyse();
+			
+			strategyCompletionService.markCompleted(this.clientId);
 		} catch (Exception e) {
 			logger.error("[{}] Error message: {}", this.getInconsistency().getInconsistencyType().name(), e.getMessage());
+			strategyCompletionService.markCompleted(this.clientId);
 		}
 	}
 
