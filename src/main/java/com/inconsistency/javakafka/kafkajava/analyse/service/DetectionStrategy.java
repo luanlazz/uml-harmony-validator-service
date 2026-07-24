@@ -61,6 +61,9 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 	private RedisTemplate<String, String> userLocaleRedisTemplate;
 
 	@Autowired
+	private StrategyCompletionService strategyCompletionService;
+	
+	@Autowired
 	public DetectionStrategy(Inconsistency inconsistency) {
 		this.inconsistency = inconsistency;
 	}
@@ -101,10 +104,9 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 	}
 
 	private void sendNotification(InconsistencyNotificationDTO inconsistencyNotification) {
-		KafkaProducer<String, InconsistencyNotificationDTO> producer = ProducerConfiguration
-				.createKafkaProducerInconsistencyErrorModel(bootstrapServers);
-		ProducerRecord<String, InconsistencyNotificationDTO> record = new ProducerRecord<>(topicInconsistencies, clientId,
-				inconsistencyNotification);
+		KafkaProducer<String, InconsistencyNotificationDTO> producer = ProducerConfiguration.createKafkaProducerInconsistencyErrorModel(bootstrapServers);
+		ProducerRecord<String, InconsistencyNotificationDTO> record = new ProducerRecord<>(topicInconsistencies, clientId, inconsistencyNotification);
+		
 		Future<RecordMetadata> future = producer.send(record, new Callback() {
 			@Override
 			public void onCompletion(RecordMetadata metadata, Exception exception) {
@@ -138,18 +140,19 @@ public abstract class DetectionStrategy implements IDetectionStrategy {
 			this.setClientId(record.key());
 
 			UMLModelDTO umlModelRedis = this.modelRepositoryRedisTemplate.opsForValue().get(record.value());
-			if (umlModelRedis == null) {
-				throw new EntityNotFoundException("Model not found to Analyse");
-			}
+			if (umlModelRedis == null) throw new EntityNotFoundException("Model not found to Analyse");
+
 			this.setUMLModel(umlModelRedis);
 
 			String localeStr = this.userLocaleRedisTemplate.opsForValue().get(record.value() + "_locale");
 			this.messageService.setLocale(localeStr);
 
 			this.analyse();
+			
+			strategyCompletionService.markCompleted(this.clientId);
 		} catch (Exception e) {
-			logger.error("[{}] Error message: {}", this.getInconsistency().getInconsistencyType().name(),
-					e.getMessage());
+			logger.error("[{}] Error message: {}", this.getInconsistency().getInconsistencyType().name(), e.getMessage());
+			strategyCompletionService.markCompleted(this.clientId);
 		}
 	}
 
