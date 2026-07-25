@@ -3,58 +3,66 @@
 A API that analyze UML models to find inconsistencies.
 
 - [UML Harmony Validator Server - detection of inconsistencies](#uml-harmony-validator-server---detection-of-inconsistencies)
-  - [🧭 Overview](#-overview)
-    - [🔍 Supported Inconsistency Types](#-supported-inconsistency-types)
-  - [🏗️ Architecture](#️-architecture)
-  - [🚀 Getting Started](#-getting-started)
-    - [🔧 Prerequisites](#-prerequisites)
-    - [📦 Installation](#-installation)
-  - [▶️ Run the Service](#️-run-the-service)
-    - [🐳 Using Docker](#-using-docker)
-    - [⚙️ Running the Application](#️-running-the-application)
-  - [💻 Usage](#-usage)
-    - [🔎 Analyze a UML Model](#-analyze-a-uml-model)
+  - [Overview](#overview)
+    - [Supported Inconsistency Types](#supported-inconsistency-types)
+  - [Architecture](#architecture)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Run the Service](#run-the-service)
+    - [Using Docker](#using-docker)
+    - [Running the Application](#running-the-application)
+  - [Usage](#usage)
+    - [Analyze a UML Model](#analyze-a-uml-model)
       - [Request (cURL)](#request-curl)
       - [Example Response](#example-response)
       - [Request (cURL)](#request-curl-1)
       - [Example Response](#example-response-1)
-  - [📄 License](#-license)
+  - [License](#-license)
 
-## 🧭 Overview
+## Overview
 
 **UML Harmony Validator Server** is a backend service that analyzes **UML Class and Sequence Diagrams** to detect **inconsistencies** based on the UML model file provided in the request.
 It helps ensure the **consistency and correctness** between different UML views of a software system.
 
-### 🔍 Supported Inconsistency Types
+### Supported Inconsistency Types
+ 
+| Code | Description | Formal Definition | CR | Diagrams |
+| ---- | ----------- | ----------------- | -- | -------- |
+| **Cm** | Multiple definitions of classes with the same name. | `IF not classUniqueName THEN Cm inconsistency` | UML | CD |
+| **Om** | Multiple definitions of objects with the same name. | `IF not lifelineUniqueName THEN Om inconsistency` | UML | SD |
+| **CnSD** | Class not instantiated in the Sequence Diagram. | `IF not R115 THEN CnSD inconsistency` | R115 | CD, SD |
+| **CnCD** | Object without an associated class in the Class Diagram. | `IF not classExists THEN CnCD inconsistency` | UML | SD, CD |
+| **ED** | Message sent in the wrong direction. | `IF not R110 and messageBelongSender THEN ED inconsistency` | R110 | SD, CD |
+| **EnM** | Message without a corresponding method. | `IF not R110 THEN EnM inconsistency` | R110 | SD, CD |
+| **EnN** | Message without a name. | `IF not messageName THEN EnN inconsistency` | UML | SD |
+| **MnSD** | Method defined in the Class Diagram but not called in the Sequence Diagram. | `IF not R114 THEN MnSD inconsistency` | R114 | CD, SD |
+| **ACSD** | Abstract class instantiated in the Sequence Diagram. | `IF not R108 THEN ACSD inconsistency` | R108 | CD, SD |
+| **CnoM** | Class without any defined methods. | `IF not classHasMethod THEN CnoM inconsistency` | UML | CD |
+| **OnN** | Object without a name. | `IF not objectName THEN OnN inconsistency` | UML | SD |
+| **EpM** | Message calling a private method in the Class Diagram. | `IF not R116 THEN EpM inconsistency` | R116 | SD, CD |
+ 
+> **CD** = Class Diagram · **SD** = Sequence Diagram · **CR** = Consistency Rule
 
-| Code     | Description                                                                 |
-| -------- | --------------------------------------------------------------------------- |
-| **Cm**   | Multiple definitions of classes with the same name.                         |
-| **Om**   | Multiple definitions of objects with the same name.                         |
-| **CnSD** | Class not instantiated in the Sequence Diagram.                             |
-| **CnCD** | Object without an associated class in the Class Diagram.                    |
-| **ED**   | Message sent in the wrong direction.                                        |
-| **EnM**  | Message without a corresponding method.                                     |
-| **EnN**  | Message without a name.                                                     |
-| **MnSD** | Method defined in the Class Diagram but not called in the Sequence Diagram. |
-| **ACSD** | Abstract class instantiated in the Sequence Diagram.                        |
-| **CnoM** | Class without any defined methods.                                          |
-| **OnN**  | Object without a name.                                                      |
-| **EpM**  | Message calling a private method in the Class Diagram.                      |
+## Architecture
 
-## 🏗️ Architecture
+### Overview
+
+![EDA overview](Images/eda_overview.png)
+> The box on the right side (B) in the architecture diagram represents this service.
+
+### Technology stack
 
 * **HTTP REST** communication
 * **Spring Boot** application with **Apache Kafka** integration
-* **Redis** for caching and fast data access
+* Detection strategies execute in **parallel** via Kafka consumer groups — one per inconsistency type
+* Results aggregated in a **Kafka Streams** state store and compiled upon completion of all strategies
+* **Redis** for model caching and fast data access during analysis
+* **SSE (Server-Sent Events)** to push analysis results to the client as soon as all strategies complete
 * **Dockerized** with `docker-compose` for local deployment
 * **Maven** for build and dependency management
 
-> The box on the right side (B) in the architecture diagram represents this service.
-
-![EDA overview](Images/eda_overview.png)
-
-## 🚀 Getting Started
+## Getting Started
 
 ### 🔧 Prerequisites
 
@@ -69,7 +77,7 @@ Before running the service, ensure the following are installed:
 > [!TIP]
 > To manage Java and Maven versions easily, consider using [ASDF Version Manager](https://asdf-vm.com/) or another tool of your choice.
 
-### 📦 Installation
+### Installation
 
 1. Clone this repository:
 
@@ -82,42 +90,44 @@ Before running the service, ensure the following are installed:
    cd uml-harmony-validator-service
    ```
 
-## ▶️ Run the Service
+## Run the Service
 
-### 🐳 Using Docker
+### 1. Start the infrastructure with Docker
 
-1. Navigate to the resources directory:
-
-   ```bash
-   cd src/main/resources
-   ```
-2. Start the local infrastructure (Kafka, Redis, etc.):
-
-   ```bash
-   docker compose up -d
-   ```
-3. Verify that the containers are running:
-
-   ```bash
-   docker ps
-   ```
-
-### ⚙️ Running the Application
-
-Once the dependencies are running, start the Spring Boot application:
-
+Navigate to the resources directory where `docker-compose.yml` is located:
+ 
 ```bash
+cd src/main/resources
+docker compose up -d
+```
+ 
+Verify all containers are running (Kafka, Zookeeper, Redis):
+ 
+```bash
+docker ps
+```
+<img width="1281" height="92" alt="image" src="https://github.com/user-attachments/assets/c8f2e816-ad1a-4bbe-b3fb-ac617d0df0e1" />
+
+### 2. Start the Spring Boot application
+ 
+Go back to the project root before running Maven:
+ 
+```bash
+cd ../../..
 mvn spring-boot:run
 ```
-
+ 
+> [!IMPORTANT]
+> `mvn spring-boot:run` must be executed from the project root (where `pom.xml` is located).
+ 
 The API will be available at:
-👉 **[http://localhost:8080](http://localhost:8080)**
+**[http://localhost:8080/api/analysis](http://localhost:8080/api/analysis)**
 
-## 💻 Usage
+## Usage
 
 This service exposes REST endpoints that allow you to submit a UML model for analysis and retrieve the detected inconsistencies.
 
-### 🔎 Analyze a UML Model
+### Analyze a UML Model
 
 <details>
   <summary><strong>1. Submit a UML file for analysis</strong></summary>
@@ -125,8 +135,8 @@ This service exposes REST endpoints that allow you to submit a UML model for ana
 #### Request (cURL)
 
 ```bash
-curl --location 'http://localhost:8080/kafka/send' \
-  --header 'Accept-Language: pt' \
+curl --location 'http://localhost:8080/api/analysis/model' \
+  --header 'Accept-Language: en' \
   --form 'file=@"/home/Documents/Question09.uml"'
 ```
 
@@ -149,7 +159,7 @@ curl --location 'http://localhost:8080/kafka/send' \
 #### Request (cURL)
 
 ```bash
-curl --location 'http://localhost:8080/kafka/inconsistencies/{client_id}'
+curl --location 'http://localhost:8080/api/analysis/stream/{client_id}'
 ```
 
 #### Example Response
@@ -212,6 +222,6 @@ curl --location 'http://localhost:8080/kafka/inconsistencies/{client_id}'
 
 </details>
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
