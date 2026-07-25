@@ -8,13 +8,13 @@ import org.springframework.data.redis.serializer.SerializationException;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModel;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class UMLModelRedisSerializer implements RedisSerializer<UMLModelDTO> {
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	
+	private static final Logger logger = LoggerFactory.getLogger(UMLModelRedisSerializer.class);
 
 	private final ObjectMapper mapper;
 

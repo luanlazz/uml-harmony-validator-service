@@ -10,10 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModel;
 
 public class ListSerde<T> implements Serde<List<T>> {
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	
+	private static final Logger logger = LoggerFactory.getLogger(ListSerde.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final Class<T> clazz;
