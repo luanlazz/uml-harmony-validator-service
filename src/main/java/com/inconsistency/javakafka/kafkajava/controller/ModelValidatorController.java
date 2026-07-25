@@ -36,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping(value = "/validator")
+@RequestMapping(value = "/api/analysis")
 public class ModelValidatorController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ModelValidatorController.class);
@@ -51,7 +51,7 @@ public class ModelValidatorController {
     private SseNotificationService sseNotificationService;
 	
 	@ResponseBody
-	@PostMapping()
+	@PostMapping("/model")
 	public ResponseEntity<Map<String, String>> validate(@RequestParam("file") MultipartFile file, Locale locale) {
 		HashMap<String, String> responseBody = new HashMap<>();
 
