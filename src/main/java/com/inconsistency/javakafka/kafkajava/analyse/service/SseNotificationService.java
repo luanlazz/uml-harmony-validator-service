@@ -18,7 +18,7 @@ import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesRespo
 @Service
 public class SseNotificationService {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(SseNotificationService.class);
 
 	private final Map<String, SseEmitter> emitterByClientMap = new ConcurrentHashMap<>();
 	private final Map<String, InconsistenciesResponse> resultCacheByClientMap = new ConcurrentHashMap<>();

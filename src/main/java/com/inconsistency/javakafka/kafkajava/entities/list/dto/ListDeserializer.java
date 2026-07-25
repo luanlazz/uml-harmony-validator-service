@@ -9,11 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModel;
 import com.inconsistency.javakafka.kafkajava.entities.dto.InconsistencyNotificationDTO;
 
 public class ListDeserializer<T> implements Deserializer<List<T>> {
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	
+	private static final Logger logger = LoggerFactory.getLogger(ListDeserializer.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 

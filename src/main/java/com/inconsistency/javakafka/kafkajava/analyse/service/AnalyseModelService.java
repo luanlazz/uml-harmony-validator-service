@@ -27,9 +27,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Component("receiveModifications")
-public class AnalyseModel {
+public class AnalyseModelService {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(AnalyseModelService.class);
 
 	@Value("${spring.kafka.topic.model-analyze}")
 	private String topicModelToAnalyze;

@@ -19,7 +19,7 @@ import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesRespo
 @Service
 public class StrategyCompletionService {
 
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	private static final Logger logger = LoggerFactory.getLogger(StrategyCompletionService.class);
 
     private int TOTAL_STRATEGIES;
 	    

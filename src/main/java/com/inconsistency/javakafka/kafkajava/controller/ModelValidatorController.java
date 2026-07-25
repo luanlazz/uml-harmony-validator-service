@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModel;
+import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModelService;
 import com.inconsistency.javakafka.kafkajava.analyse.service.SseNotificationService;
 import com.inconsistency.javakafka.kafkajava.controller.dto.InconsistenciesResponse;
 import com.inconsistency.javakafka.kafkajava.entities.uml.dto.UMLModelDTO;
@@ -45,7 +45,7 @@ public class ModelValidatorController {
 	private final AtomicLong counter = new AtomicLong();
 
 	@Autowired
-	private AnalyseModel analyseUMLModelService;
+	private AnalyseModelService analyseUMLModelService;
 
 	@Autowired
     private SseNotificationService sseNotificationService;

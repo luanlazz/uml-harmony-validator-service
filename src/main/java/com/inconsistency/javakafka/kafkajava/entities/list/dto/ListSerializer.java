@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.inconsistency.javakafka.kafkajava.analyse.service.AnalyseModel;
 
 public class ListSerializer<T> implements Serializer<List<T>> {
-	private static final Logger logger = LoggerFactory.getLogger(AnalyseModel.class);
+	
+	private static final Logger logger = LoggerFactory.getLogger(ListSerializer.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
