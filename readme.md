@@ -6,19 +6,22 @@ A API that analyze UML models to find inconsistencies.
   - [Overview](#overview)
     - [Supported Inconsistency Types](#supported-inconsistency-types)
   - [Architecture](#architecture)
+    - [Overview](#overview-1)
+    - [Technology stack](#technology-stack)
+    - [Flow diagram](#flow-diagram)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Run the Service](#run-the-service)
-    - [Using Docker](#using-docker)
-    - [Running the Application](#running-the-application)
+    - [1. Start the infrastructure with Docker](#1-start-the-infrastructure-with-docker)
+    - [2. Start the Spring Boot application](#2-start-the-spring-boot-application)
   - [Usage](#usage)
     - [Analyze a UML Model](#analyze-a-uml-model)
       - [Request (cURL)](#request-curl)
       - [Example Response](#example-response)
       - [Request (cURL)](#request-curl-1)
       - [Example Response](#example-response-1)
-  - [License](#-license)
+  - [License](#license)
 
 ## Overview
 
@@ -62,9 +65,48 @@ It helps ensure the **consistency and correctness** between different UML views 
 * **Dockerized** with `docker-compose` for local deployment
 * **Maven** for build and dependency management
 
+### Flow diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Eclipse Plugin (A)                       │
+│  POST /api/analysis/model ──────────────► GET /api/analysis/    │
+│  (submit UML file)                        stream/{clientId}     │
+└──────────────────────────┬──────────────────────▲──────────────┘
+                           │                      │ SSE event
+                           ▼                      │ (result ready)
+┌─────────────────────────────────────────────────────────────────┐
+│                   Spring Boot Service (B)                       │
+│                                                                 │
+│  REST Controller ──► Kafka Producer ──► topic: model-to-analyze │
+│                                                  │              │
+│                          ┌───────────────────────┘              │
+│                          ▼  (parallel consumers)                │
+│              ┌──────────────────────────┐                       │
+│              │   Detection Strategies   │                       │
+│              │  Cm  Om  CnSD  CnCD  ED  │                       │
+│              │  EnM EnN MnSD ACSD CnoM  │                       │
+│              │         OnN  EpM         │                       │
+│              └────────────┬─────────────┘                       │
+│                           │ each publishes to                   │
+│                           ▼ topic: inconsistencies              │
+│              ┌────────────────────────┐                         │
+│              │   Kafka Streams Store  │◄── StrategyCompletion   │
+│              │  (aggregate results)   │    Service (counter)    │
+│              └────────────┬───────────┘                         │
+│                           │                                     │
+│              ┌────────────▼───────────┐                         │
+│              │  InconsistencyCompiler │──► SseNotification      │
+│              │  + ModelMetrics        │    Service ──► client   │
+│              └────────────────────────┘                         │
+│                                                                 │
+│  Redis: UML model cache per clientId                            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ## Getting Started
 
-### 🔧 Prerequisites
+### Prerequisites
 
 Before running the service, ensure the following are installed:
 
