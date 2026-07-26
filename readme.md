@@ -1,3 +1,5 @@
+<img width="1055" height="323" alt="image" src="https://github.com/user-attachments/assets/e3ff0fcd-d916-4f12-b648-328e04aff916" />
+
 # UML Harmony Validator Server - detection of inconsistencies
 
 A API that analyze UML models to find inconsistencies.
